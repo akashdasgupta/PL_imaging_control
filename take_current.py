@@ -8,6 +8,7 @@ Created on Sun Nov 15 12:20:49 2020
 import time
 import imageio
 import csv
+import numpy as np
 # Device libs:
 from QuickMux_SDK import QuickMux
 from keithley2600 import Keithley2600
@@ -82,13 +83,12 @@ while True:
     if float(cam.get_temperature()) <=1:
         break
 print("Cooled to 0 deg C")
-
 # Sets cam to 16 bit (bit depth linked to readout speed, its really dumb): 
-err = cam.set_value("PixelReadoutRate", 1)# enum, 0= fast (12 bit), 1= normal (16 bit)
+cam.set_value("PixelReadoutRate", 1)# enum, 0= fast (12 bit), 1= normal (16 bit)
 # We probably don't want any weird noise filtering:
-err  = cam.set_value("SpuriousNoiseFilter", False)
-err =  cam.set_value("ElectronicShutteringMode", zyla_shutter_mode)
-err = cam.set_exposure(zyla_exposure_time)
+cam.set_value("SpuriousNoiseFilter", False)
+cam.set_value("ElectronicShutteringMode", zyla_shutter_mode)
+cam.set_exposure(zyla_exposure_time)
 
 # Sets channel: 
 qm.set_channel(mux_input_channel, mux_output_channel)
@@ -106,6 +106,66 @@ kchan.source.func = k.smub.OUTPUT_DCVOLTS
 kchan.source.levelv = 0 
 # End of setup
 #####################################################################################################
+
+# Functions:
+
+def int_sweep_oc(vstep, num_snaps, savepath):
+    # Set 0V for open circuit
+    kchan.reset()
+    kchan.source.func = k.smub.OUTPUT_DCVOLTS
+    kchan.source.levelv = 0 
+
+    times = []
+    nominal_voltages = []
+    voltages = []
+    currents = []
+
+    starttime = time.time()
+    for nominal_v in np.arange(2.8, 3.85,vstep):
+        ps.write(f"VOLT {nominal_v}")
+        v1 = float(ps.query("MEAS:VOLT?"))
+        i1 = float(ps.query("MEAS:CURR?"))
+
+        for i in range(num_snaps):
+            image = cam.snap()
+            imageio.imwrite(savepath + "\\" + str(nominal_v)+"FORWARDS_"+str(i)+".tif", image)
+        
+        v2 = float(ps.query("MEAS:VOLT?"))
+        i2 = float(ps.query("MEAS:CURR?"))
+
+        voltages.append((v1+v2)/2)
+        currents.append((i1+i2)/2)
+        nominal_voltages.append(nominal_v)
+        times.append(time.time()-starttime)
+    
+    for nominal_v in np.arange(3.85,2.8,vstep):
+        ps.write(f"VOLT {nominal_v}")
+        v1 = float(ps.query("MEAS:VOLT?"))
+        i1 = float(ps.query("MEAS:CURR?"))
+
+        for i in range(num_snaps):
+            image = cam.snap()
+            imageio.imwrite(savepath + "\\" + str(nominal_v)+"BACKWARDS"+str(i)+".tif", image)
+        
+        v2 = float(ps.query("MEAS:VOLT?"))
+        i2 = float(ps.query("MEAS:CURR?"))
+
+        voltages.append((v1+v2)/2)
+        currents.append((i1+i2)/2)
+        nominal_voltages.append(nominal_v)
+        times.append(time.time()-starttime)
+    
+    with open(savepath+ "\\" + "iv.csv", 'w', newline='') as file:
+        writer = csv.writer(file)
+        for row in zip(times, nominal_voltages, voltages, currents):
+            writer.writerow(row)
+
+    with open(savepath + "\\" + "camera_setting_dump.txt",'w') as file:
+        print(cam.get_all_values(), file=file)
+
+
+
+
 # Cleanup: 
 qm.close()
 cam.close()
