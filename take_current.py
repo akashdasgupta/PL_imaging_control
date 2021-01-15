@@ -21,9 +21,15 @@ keithly_string = 'NONE'
 power_supply_string = 'NONE'
 for resource in resources:
     if resource.startswith("USB"):
-        power_supply_string = resource
-    elif resource.startswith("GPIB0"):
+        power_supply_string = resource # Only thing that shows up as USB
+    elif resource.startswith("GPIB0"): # How it's connected
         keithly_string = resource
+
+# Equipment vars:
+cam = None # Camera
+k=None # Sourcemeter
+qm=None # Mux
+ps =None # Powersupply
 
 # Open Camera:
 try:
@@ -32,7 +38,6 @@ except:
     print("Couldn't connect to ANDOR Zyla!")
     
 # !!! Very oddly, camera MUST be opened before mux and sourcemeter, no clue why
-
 # Open sourcemeter: 
 try:
     k = Keithley2600(keithly_string, raise_keithley_errors=True, visa_library=r'C:\Windows\System32\visa64.dll') # Keithley Sourcemeter
@@ -46,6 +51,15 @@ except:
     print('Could not connect to QuickMux!')
 
 # Open Power supply
+try:
+    ps = rm.open_resource(power_supply_string)
+    ps.read_termination = '\n'
+    ps.write_termination = '\n'
+    # Safety: 
+    ps.write("OUTPUT OFF")
+    ps.write("CURR:LIM 2")
+except:
+    print('Could not connect to LED ower supply! ID given:', keithly_string)
 
 
 #####################################################################################################
