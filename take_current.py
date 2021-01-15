@@ -115,28 +115,36 @@ def int_sweep_oc(vstep, num_snaps, savepath):
     kchan.source.func = k.smub.OUTPUT_DCVOLTS
     kchan.source.levelv = 0 
 
-    times = []
     nominal_voltages = []
-    voltages = []
-    currents = []
+    source_voltages = []
+    source_currents = []
 
-    starttime = time.time()
+    image_index = []
+    voltage = []
+    current = []
+
     for nominal_v in np.arange(2.8, 3.85,vstep):
         ps.write(f"VOLT {nominal_v}")
         v1 = float(ps.query("MEAS:VOLT?"))
         i1 = float(ps.query("MEAS:CURR?"))
 
         for i in range(num_snaps):
+            vm1 = kchan.measure.v()
+            im1 = kchan.measure.i()
             image = cam.snap()
             imageio.imwrite(savepath + "\\" + str(nominal_v)+"FORWARDS_"+str(i)+".tif", image)
-        
+            vm2 = kchan.measure.v()
+            im2 = kchan.measure.i()
+            image_index.append( str(nominal_v)+"FORWARDS_"+str(i)+".tif")
+            voltage.append((vm1+vm2)/2)
+            current.append((im1+im2)/2)
+
         v2 = float(ps.query("MEAS:VOLT?"))
         i2 = float(ps.query("MEAS:CURR?"))
 
-        voltages.append((v1+v2)/2)
-        currents.append((i1+i2)/2)
+        source_voltages.append((v1+v2)/2)
+        source_currents.append((i1+i2)/2)
         nominal_voltages.append(nominal_v)
-        times.append(time.time()-starttime)
     
     for nominal_v in np.arange(3.85,2.8,vstep):
         ps.write(f"VOLT {nominal_v}")
@@ -144,20 +152,31 @@ def int_sweep_oc(vstep, num_snaps, savepath):
         i1 = float(ps.query("MEAS:CURR?"))
 
         for i in range(num_snaps):
+            vm1 = kchan.measure.v()
+            im1 = kchan.measure.i()
             image = cam.snap()
             imageio.imwrite(savepath + "\\" + str(nominal_v)+"BACKWARDS"+str(i)+".tif", image)
-        
+            vm2 = kchan.measure.v()
+            im2 = kchan.measure.i()
+            image_index.append( str(nominal_v)+"BACKWARDS"+str(i)+".tif")
+            voltage.append((vm1+vm2)/2)
+            current.append((im1+im2)/2)
+
         v2 = float(ps.query("MEAS:VOLT?"))
         i2 = float(ps.query("MEAS:CURR?"))
 
-        voltages.append((v1+v2)/2)
-        currents.append((i1+i2)/2)
+        source_voltages.append((v1+v2)/2)
+        source_currents.append((i1+i2)/2)
         nominal_voltages.append(nominal_v)
-        times.append(time.time()-starttime)
+    
+    with open(savepath+ "\\" + "LED.csv", 'w', newline='') as file:
+        writer = csv.writer(file)
+        for row in zip(nominal_voltages, source_voltages, source_currents):
+            writer.writerow(row)
     
     with open(savepath+ "\\" + "iv.csv", 'w', newline='') as file:
         writer = csv.writer(file)
-        for row in zip(times, nominal_voltages, voltages, currents):
+        for row in zip(image_index, voltage, current):
             writer.writerow(row)
 
     with open(savepath + "\\" + "camera_setting_dump.txt",'w') as file:
