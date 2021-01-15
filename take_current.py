@@ -29,7 +29,7 @@ for resource in resources:
 # Equipment vars:
 cam = None # Camera
 k=None # Sourcemeter
-qm=None # Mux
+#qm=None # Mux
 ps =None # Powersupply
 
 # Open Camera:
@@ -46,10 +46,10 @@ except:
     print('Could not connect to Keithley sourcemeter! ID given:', keithly_string)
 
 # Open mux:
-try:
-    qm = QuickMux() 
-except:
-    print('Could not connect to QuickMux!')
+# try:
+#     qm = QuickMux() 
+# except:
+#     print('Could not connect to QuickMux!')
 
 # Open Power supply
 try:
@@ -91,7 +91,7 @@ cam.set_value("ElectronicShutteringMode", zyla_shutter_mode)
 cam.set_exposure(zyla_exposure_time)
 
 # Sets channel: 
-qm.set_channel(mux_input_channel, mux_output_channel)
+#qm.set_channel(mux_input_channel, mux_output_channel)
 
 if keithly_input_channel:
     # Reset any Keithly setting: 
@@ -123,6 +123,7 @@ def int_sweep_oc(vstep, num_snaps, savepath):
     voltage = []
     current = []
 
+    ps.write("OUTPUT ON")
     for nominal_v in np.arange(2.8, 3.85,vstep):
         ps.write(f"VOLT {nominal_v}")
         v1 = float(ps.query("MEAS:VOLT?"))
@@ -183,10 +184,10 @@ def int_sweep_oc(vstep, num_snaps, savepath):
         print(cam.get_all_values(), file=file)
 
 
-
+int_sweep_oc(0.1,2,r"C:\Users\akashdasgupta\Documents\test")
 
 # Cleanup: 
-qm.close()
+# qm.close()
 cam.close()
 k.close()
 ps.close()
