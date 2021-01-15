@@ -14,6 +14,17 @@ from keithley2600 import Keithley2600
 from pylablib.aux_libs.devices import Andor
 import pyvisa as visa
 
+rm = visa.ResourceManager(r'C:\Windows\System32\visa64.dll')
+resources = rm.list_resources()
+# resource strings:
+keithly_string = 'NONE'
+power_supply_string = 'NONE'
+for resource in resources:
+    if resource.startswith("USB"):
+        power_supply_string = resource
+    elif resource.startswith("GPIB0"):
+        keithly_string = resource
+
 # Open Camera:
 try:
     cam = Andor.AndorSDK3Camera()
@@ -24,9 +35,9 @@ except:
 
 # Open sourcemeter: 
 try:
-    k = Keithley2600('ASRLCOM1::INSTR',  raise_keithley_errors=True, baud_rate=115200) # Keithley Sourcemeter
+    k = Keithley2600(keithly_string, raise_keithley_errors=True, visa_library=r'C:\Windows\System32\visa64.dll') # Keithley Sourcemeter
 except:
-    print('Could not connect to Keithley sourcemeter!')
+    print('Could not connect to Keithley sourcemeter! ID given:', keithly_string)
 
 # Open mux:
 try:
