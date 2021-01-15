@@ -109,6 +109,18 @@ kchan.source.levelv = 0
 
 # Functions:
 
+def measure_ps_iv():
+    while True:
+        try:
+            vmeas = float(ps.query("MEAS:VOLT?"))
+            imeas = float(ps.query("MEAS:CURR?"))
+        except ValueError:
+            continue
+        break
+    return imeas, vmeas
+
+
+
 def int_sweep_oc(vstep, num_snaps, savepath):
     # Set 0V for open circuit
     kchan.reset()
@@ -126,8 +138,7 @@ def int_sweep_oc(vstep, num_snaps, savepath):
     ps.write("OUTPUT ON")
     for nominal_v in np.arange(2.8, 3.85,vstep):
         ps.write(f"VOLT {nominal_v}")
-        v1 = float(ps.query("MEAS:VOLT?"))
-        i1 = float(ps.query("MEAS:CURR?"))
+        v1, i1 = measure_ps_iv()
 
         for i in range(num_snaps):
             vm1 = kchan.measure.v()
@@ -140,8 +151,7 @@ def int_sweep_oc(vstep, num_snaps, savepath):
             voltage.append((vm1+vm2)/2)
             current.append((im1+im2)/2)
 
-        v2 = float(ps.query("MEAS:VOLT?"))
-        i2 = float(ps.query("MEAS:CURR?"))
+        v2 ,i2 = measure_ps_iv()
 
         source_voltages.append((v1+v2)/2)
         source_currents.append((i1+i2)/2)
@@ -149,8 +159,7 @@ def int_sweep_oc(vstep, num_snaps, savepath):
     
     for nominal_v in np.arange(3.85,2.8,vstep):
         ps.write(f"VOLT {nominal_v}")
-        v1 = float(ps.query("MEAS:VOLT?"))
-        i1 = float(ps.query("MEAS:CURR?"))
+        v1 , i1 = measure_ps_iv()
 
         for i in range(num_snaps):
             vm1 = kchan.measure.v()
@@ -163,8 +172,7 @@ def int_sweep_oc(vstep, num_snaps, savepath):
             voltage.append((vm1+vm2)/2)
             current.append((im1+im2)/2)
 
-        v2 = float(ps.query("MEAS:VOLT?"))
-        i2 = float(ps.query("MEAS:CURR?"))
+        v2, i2 = measure_ps_iv()
 
         source_voltages.append((v1+v2)/2)
         source_currents.append((i1+i2)/2)
