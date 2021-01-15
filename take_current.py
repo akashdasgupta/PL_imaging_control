@@ -178,6 +178,8 @@ def int_sweep_oc(vstep, num_snaps, savepath):
         source_currents.append((i1+i2)/2)
         nominal_voltages.append(nominal_v)
     
+    ps.write("OUTPUT ON") # for safety
+    
     with open(savepath+ "\\" + "LED.csv", 'w', newline='') as file:
         writer = csv.writer(file)
         for row in zip(nominal_voltages, source_voltages, source_currents):
@@ -197,5 +199,4 @@ int_sweep_oc(0.1,2,r"C:\Users\akashdasgupta\Documents\test")
 # Cleanup: 
 # qm.close()
 cam.close()
-k.close()
 ps.close()
