@@ -83,12 +83,13 @@ while True:
     if float(cam.get_temperature()) <=1:
         break
 print("Cooled to 0 deg C")
-# Sets cam to 16 bit (bit depth linked to readout speed, its really dumb): 
-cam.set_value("PixelReadoutRate", 1)# enum, 0= fast (12 bit), 1= normal (16 bit)
 # We probably don't want any weird noise filtering:
 cam.set_value("SpuriousNoiseFilter", False)
 cam.set_value("ElectronicShutteringMode", zyla_shutter_mode)
 cam.set_exposure(zyla_exposure_time)
+
+# Sets cam to 16 bit: 
+cam.set_value("SimplePreAmpGainControl",2) # 0 = 12-bit (high well capacity), 1 = 12-bit (low noise), 16-bit (low noise & high well capacity)
 
 # Sets channel: 
 #qm.set_channel(mux_input_channel, mux_output_channel)
