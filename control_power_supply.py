@@ -9,6 +9,7 @@ import numpy as np
 import csv
 import time
 from matplotlib import pyplot as plt
+plt.rcParams['figure.dpi'] = 200
 
 rm = visa.ResourceManager(r'C:\Windows\System32\visa64.dll')
 resources = rm.list_resources()
@@ -29,7 +30,7 @@ mp.write("CURR:LIM 2")
 # mp.write("VOLT:LIM 3.4")
 
 ## TEST 1:   
-voltages = np.arange(2.9, 3.4, 0.01)
+voltages = np.arange(2.801, 3.9, 0.01)
 mp.write("OUTPUT ON")
 mp.write("VOLT 2.8")
 #time.sleep(10)
@@ -40,7 +41,7 @@ mi = []
 for volt in voltages:
     mp.write(f"volt {volt}")
     v = mp.query("MEAS:VOLT?")
-    i = float(mp.query("measure:current?"))
+    i = float(mp.query("MEAS:CURR?"))
     time.sleep(1)
     mv.append(float(v))
     mi.append(float(i))
@@ -49,9 +50,13 @@ for volt in voltages:
 mp.write("OUTPUT OFF")
 mp.close()
 
-plt.plot(mv, mi)
+plt.scatter(mv[1:], mi[1:], color='k')
+plt.xlabel("Applied voltage")
+plt.ylabel("Current")
 
 """
+Reference: 
+
 VOLT?
 CURR?
 OUTPUT ON
