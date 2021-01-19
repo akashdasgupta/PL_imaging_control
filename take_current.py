@@ -58,7 +58,7 @@ try:
     ps.write_termination = '\n'
     # Safety: 
     ps.write("OUTPUT OFF")
-    ps.write("CURR:LIM 2")
+    ps.write("CURR:LIM 2.01")
 except:
     print('Could not connect to LED ower supply! ID given:', keithly_string)
 
@@ -68,12 +68,14 @@ except:
 mux_input_channel = 7
 mux_output_channel = 1
     
-zyla_exposure_time = 0.1  #s
-zyla_shutter_mode = 0 # 0 = rolling, 1 = global
+zyla_exposure_time = 0.001  #s
+zyla_shutter_mode = 0 # 0 = rolling, 1 = global#
+num_images = 1 # how many repeats
 
 keithly_input_channel = 1 # 0 = A, 1 = B
+current_step = 0.1 # amps
     
-savepath = r"C:\Users\akashdasgupta\Documents\temp"
+savepath = r"C:\Users\akashdasgupta\Documents\EL\test"
 #*************************************************** 
 
 # Cool the camera:
@@ -103,7 +105,7 @@ else:
 
 kchan.reset()
 # Not sure if I need this, setting to open circuit:
-kchan.source.func = k.smub.OUTPUT_DCVOLTS
+kchan.source.func = kchan.OUTPUT_DCVOLTS
 kchan.source.levelv = 0 
 # End of setup
 #####################################################################################################
@@ -125,7 +127,7 @@ def measure_ps_iv():
 def int_sweep_oc(vstep, num_snaps, savepath):
     # Set 0V for open circuit
     kchan.reset()
-    kchan.source.func = k.smub.OUTPUT_DCVOLTS
+    kchan.source.func = kchan.OUTPUT_DCVOLTS
     kchan.source.levelv = 0 
 
     nominal_voltages = []
@@ -137,7 +139,7 @@ def int_sweep_oc(vstep, num_snaps, savepath):
     current = []
 
     ps.write("OUTPUT ON")
-    for nominal_v in np.arange(2.8, 3.85,vstep):
+    for nominal_v in np.arange(2.9, 3.9,vstep):
         ps.write(f"VOLT {nominal_v}")
         v1, i1 = measure_ps_iv()
 
@@ -158,7 +160,7 @@ def int_sweep_oc(vstep, num_snaps, savepath):
         source_currents.append((i1+i2)/2)
         nominal_voltages.append(nominal_v)
     
-    for nominal_v in np.arange(3.85,2.8,vstep):
+    for nominal_v in np.arange(3.85,2.8,-vstep):
         ps.write(f"VOLT {nominal_v}")
         v1 , i1 = measure_ps_iv()
 
@@ -179,7 +181,7 @@ def int_sweep_oc(vstep, num_snaps, savepath):
         source_currents.append((i1+i2)/2)
         nominal_voltages.append(nominal_v)
     
-    ps.write("OUTPUT ON") # for safety
+    ps.write("OUTPUT OFF") # for safety
     
     with open(savepath+ "\\" + "LED.csv", 'w', newline='') as file:
         writer = csv.writer(file)
@@ -195,7 +197,7 @@ def int_sweep_oc(vstep, num_snaps, savepath):
         print(cam.get_all_values(), file=file)
 
 
-int_sweep_oc(0.1,2,r"C:\Users\akashdasgupta\Documents\test")
+int_sweep_oc(current_step,num_images,savepath)
 
 # Cleanup: 
 # qm.close()
