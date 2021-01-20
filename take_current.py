@@ -158,7 +158,7 @@ def int_sweep_oc(vstep, num_snaps, savepath):
         for i in range(num_snaps):
             image = cam.snap()
             imageio.imwrite(savepath + "\\" + str(nominal_v)+"FORWARDS_"+str(i)+".tif", image)
-            image_index.append( str(nominal_v)+"FORWARDS_"+str(i)+".tif")
+            image_index.append( str(nominal_v)+"_FORWARDS_"+str(i)+".tif")
             voltage.append(vm)
             current.append(im)
 
@@ -176,7 +176,7 @@ def int_sweep_oc(vstep, num_snaps, savepath):
         for i in range(num_snaps):
             image = cam.snap()
             imageio.imwrite(savepath + "\\" + str(nominal_v)+"BACKWARDS"+str(i)+".tif", image)
-            image_index.append( str(nominal_v)+"BACKWARDS"+str(i)+".tif")
+            image_index.append( str(nominal_v)+"_BACKWARDS_"+str(i)+".tif")
             voltage.append(vm)
             current.append(im)
 
