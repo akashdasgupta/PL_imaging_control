@@ -6,6 +6,7 @@ Created on Sun Nov 15 12:20:49 2020
 """
 
 import time
+import os
 import imageio
 import csv
 import numpy as np
@@ -73,9 +74,11 @@ zyla_shutter_mode = 0 # 0 = rolling, 1 = global#
 num_images = 1 # how many repeats
 
 keithly_input_channel = 1 # 0 = A, 1 = B
-current_step = 0.1 # amps
+current_step = 0.01 # amps
     
-savepath = r"C:\Users\akashdasgupta\Documents\EL\test"
+savepath = r"C:\Users\akashdasgupta\Documents\EL\first_data\test4"
+whitepath= savepath+ r"\white"
+
 #*************************************************** 
 
 # Cool the camera:
@@ -97,10 +100,8 @@ cam.set_value("SimplePreAmpGainControl",2) # 0 = 12-bit (high well capacity), 1 
 #qm.set_channel(mux_input_channel, mux_output_channel)
 
 if keithly_input_channel:
-    # Reset any Keithly setting: 
     kchan = k.smub
 else:
-    # Reset any Keithly setting: 
     kchan = k.smua
 
 kchan.reset()
@@ -115,33 +116,44 @@ kchan.source.levelv = 0
 def measure_ps_iv():
     while True:
         try:
-            vmeas = float(ps.query("MEAS:VOLT?"))
-            imeas = float(ps.query("MEAS:CURR?"))
+            imeas = ps.query("MEAS:CURR?")
+            imeas = ps.query("MEAS:CURR?")
+            
+            imeas = float(imeas)
         except ValueError:
             continue
         break
-    return imeas, vmeas
+    return imeas
 
 
 
 def int_sweep_oc(vstep, num_snaps, savepath):
+    # make directory for backgrounds if not already there:
+    if not os.path.isdir(savepath+'\\refs'):
+        os.makedirs(savepath+'\\refs')
+    
     # Set 0V for open circuit
     kchan.reset()
     kchan.source.func = kchan.OUTPUT_DCVOLTS
     kchan.source.levelv = 0 
 
     nominal_voltages = []
-    source_voltages = []
     source_currents = []
 
     image_index = []
     voltage = []
     current = []
 
+    num_refs = 0
+    for i in range(10):
+        image = cam.snap()
+        imageio.imwrite(savepath+'\\refs'+"\\ref_"+str(num_refs)+".tif", image)
+        num_refs += 1
+
     ps.write("OUTPUT ON")
     for nominal_v in np.arange(2.9, 3.9,vstep):
         ps.write(f"VOLT {nominal_v}")
-        v1, i1 = measure_ps_iv()
+        time.sleep(1)
 
         for i in range(num_snaps):
             vm1 = kchan.measure.v()
@@ -154,15 +166,14 @@ def int_sweep_oc(vstep, num_snaps, savepath):
             voltage.append((vm1+vm2)/2)
             current.append((im1+im2)/2)
 
-        v2 ,i2 = measure_ps_iv()
+        im = measure_ps_iv()
 
-        source_voltages.append((v1+v2)/2)
-        source_currents.append((i1+i2)/2)
+        source_currents.append(im)
         nominal_voltages.append(nominal_v)
     
     for nominal_v in np.arange(3.85,2.8,-vstep):
         ps.write(f"VOLT {nominal_v}")
-        v1 , i1 = measure_ps_iv()
+        time.sleep(1)
 
         for i in range(num_snaps):
             vm1 = kchan.measure.v()
@@ -175,17 +186,22 @@ def int_sweep_oc(vstep, num_snaps, savepath):
             voltage.append((vm1+vm2)/2)
             current.append((im1+im2)/2)
 
-        v2, i2 = measure_ps_iv()
+        im = measure_ps_iv()
 
-        source_voltages.append((v1+v2)/2)
-        source_currents.append((i1+i2)/2)
+        source_currents.append(im)
         nominal_voltages.append(nominal_v)
     
     ps.write("OUTPUT OFF") # for safety
     
+    for i in range(10):
+        image = cam.snap()
+        imageio.imwrite(savepath+'\\refs'+"\\ref_"+str(num_refs)+".tif", image)
+        num_refs += 1
+
+    
     with open(savepath+ "\\" + "LED.csv", 'w', newline='') as file:
         writer = csv.writer(file)
-        for row in zip(nominal_voltages, source_voltages, source_currents):
+        for row in zip(nominal_voltages, source_currents):
             writer.writerow(row)
     
     with open(savepath+ "\\" + "iv.csv", 'w', newline='') as file:
@@ -196,9 +212,17 @@ def int_sweep_oc(vstep, num_snaps, savepath):
     with open(savepath + "\\" + "camera_setting_dump.txt",'w') as file:
         print(cam.get_all_values(), file=file)
 
+def take_white(whitepath):
+    if not os.path.isdir(whitepath):
+        os.makedirs(whitepath)
+    for i in range(10):
+        image = cam.snap()
+        imageio.imwrite(whitepath+r"\white_"+str(i)+".tif", image)
+
 
 int_sweep_oc(current_step,num_images,savepath)
-
+if input("load_white? Y/[N]").lower() == 'Y':
+    take_white(whitepath)
 # Cleanup: 
 # qm.close()
 cam.close()
