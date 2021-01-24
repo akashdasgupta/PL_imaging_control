@@ -209,14 +209,21 @@ def int_sweep_oc(vstep, num_snaps, savepath):
 def take_white(whitepath):
     if not os.path.isdir(whitepath):
         os.makedirs(whitepath)
+    
+    ps.write("OUTPUT ON")
+    ps.write("VOLT 3.7")
+
+
     for i in range(10):
         image = cam.snap()
         imageio.imwrite(whitepath+r"\white_"+str(i)+".tif", image)
 
+whitepath = r"C:\Users\akashdasgupta\Desktop\temp\white"
+#int_sweep_oc(current_step,num_images,savepath)
+#if input("load_white? Y/[N]").lower() == 'Y':
+    # take_white(whitepath)
+# take_white(whitepath)
 
-int_sweep_oc(current_step,num_images,savepath)
-if input("load_white? Y/[N]").lower() == 'Y':
-    take_white(whitepath)
 # Cleanup: 
 # qm.close()
 cam.close()
