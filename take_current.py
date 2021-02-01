@@ -69,15 +69,15 @@ except:
 mux_input_channel = 7
 mux_output_channel = 1
     
-zyla_exposure_time = 0.001  #s
+zyla_exposure_time = 0.003  #s
 zyla_shutter_mode = 0 # 0 = rolling, 1 = global#
-num_images = 1 # how many repeats
+num_images = 5 # how many repeats
 
 keithly_input_channel = 1 # 0 = A, 1 = B
 current_step = 0.01 # amps
     
-savepath = r"C:\Users\akashdasgupta\Documents\EL\first_data\test6"
-whitepath= savepath+ r"\white"
+savepath = r"\\cmfs1.physics.ox.ac.uk\cm\akashdasgupta\Data\EL_setup\first_data\test_data\example_name\21"
+whitepath= r"\\cmfs1.physics.ox.ac.uk\cm\akashdasgupta\Data\EL_setup\first_data\test_data\example_name\white"
 
 #*************************************************** 
 
@@ -149,6 +149,7 @@ def int_sweep_oc(vstep, num_snaps, savepath):
 
     ps.write("OUTPUT ON")
     for nominal_v in np.arange(2.6, 3.9,vstep):
+        
         ps.write(f"VOLT {nominal_v}")
         time.sleep(2)
         vm = kchan.measure.v()
@@ -157,11 +158,10 @@ def int_sweep_oc(vstep, num_snaps, savepath):
 
         for i in range(num_snaps):
             image = cam.snap()
-            imageio.imwrite(savepath + "\\" + str(nominal_v)+"FORWARDS_"+str(i)+".tif", image)
-            image_index.append( str(nominal_v)+"_FORWARDS_"+str(i)+".tif")
-            voltage.append(vm)
-            current.append(im)
-
+            imageio.imwrite(savepath + "\\" +"{:.3f}".format(nominal_v)+"_FORWARDS_"+str(i)+".tif", image)
+            image_index.append("{:.3f}".format(nominal_v)+"_FORWARDS_"+str(i)+".tif")
+        voltage.append(vm)
+        current.append(im)
         ism = measure_ps_iv()
 
         source_currents.append(ism)
@@ -175,11 +175,10 @@ def int_sweep_oc(vstep, num_snaps, savepath):
 
         for i in range(num_snaps):
             image = cam.snap()
-            imageio.imwrite(savepath + "\\" + str(nominal_v)+"BACKWARDS"+str(i)+".tif", image)
-            image_index.append( str(nominal_v)+"_BACKWARDS_"+str(i)+".tif")
-            voltage.append(vm)
-            current.append(im)
-
+            imageio.imwrite(savepath + "\\" + "{:.3f}".format(nominal_v)+"_BACKWARDS_"+str(i)+".tif", image)
+            image_index.append("{:.3f}".format(nominal_v)+"_BACKWARDS_"+str(i)+".tif")
+        voltage.append(vm)
+        current.append(im)
         ism = measure_ps_iv()
 
         source_currents.append(ism)
@@ -193,14 +192,9 @@ def int_sweep_oc(vstep, num_snaps, savepath):
         num_refs += 1
 
     
-    with open(savepath+ "\\" + "LED.csv", 'w', newline='') as file:
-        writer = csv.writer(file)
-        for row in zip(nominal_voltages, source_currents):
-            writer.writerow(row)
-    
     with open(savepath+ "\\" + "iv.csv", 'w', newline='') as file:
         writer = csv.writer(file)
-        for row in zip(image_index, voltage, current):
+        for row in zip(nominal_voltages, source_currents, voltage, current):
             writer.writerow(row)
 
     with open(savepath + "\\" + "camera_setting_dump.txt",'w') as file:
@@ -211,18 +205,19 @@ def take_white(whitepath):
         os.makedirs(whitepath)
     
     ps.write("OUTPUT ON")
-    ps.write("VOLT 3.7")
+    ps.write("VOLT 2.8")
 
 
     for i in range(10):
         image = cam.snap()
-        imageio.imwrite(whitepath+r"\white_"+str(i)+".tif", image)
+        imageio.imwrite(whitepath+"\\white_"+str(i)+".tif", image)
+    ps.write("OUTPUT OFF")
 
 whitepath = r"C:\Users\akashdasgupta\Desktop\temp\white"
-#int_sweep_oc(current_step,num_images,savepath)
-#if input("load_white? Y/[N]").lower() == 'Y':
-    # take_white(whitepath)
-# take_white(whitepath)
+int_sweep_oc(current_step,num_images,savepath)
+if input("load_white? Y/[N]").lower() == 'Y':
+    take_white(whitepath)
+
 
 # Cleanup: 
 # qm.close()
