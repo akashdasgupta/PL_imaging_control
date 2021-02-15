@@ -33,6 +33,16 @@ k=None # Sourcemeter
 mux = None
 ps =None # Powersupply
 
+
+#Open mux:
+try:
+    mux = serial.Serial("COM4") # Ardunios usually live in com4
+    mux.Terminator = ''
+
+except:
+    print('Could not connect to Mux!')
+
+
 # Open Camera:
 try:
     cam = Andor.AndorSDK3Camera()
@@ -46,11 +56,6 @@ try:
 except:
     print('Could not connect to Keithley sourcemeter! ID given:', keithly_string)
 
-#Open mux:
-try:
-    mux = serial.Serial("COM4") # Ardunios usually live in com4
-except:
-    print('Could not connect to Mux!')
 
 # Open Power supply
 try:
@@ -66,7 +71,7 @@ except:
 #####################################################################################################
 # SETUP, PLEASE EDIT:
 #***************************************************  
-mux_output_channel = 1
+mux_output_channel = 6
     
 zyla_exposure_time = 0.001  #s
 zyla_shutter_mode = 0 # 0 = rolling, 1 = global#
@@ -75,7 +80,7 @@ num_images = 1 # how many repeats
 keithly_input_channel = 1 # 0 = A, 1 = B
 current_step = 0.01 # amps
     
-savepath = r"C:\Users\akashdasgupta\Desktop\Peoples_test_samples\aug\00385A-ALD_thickness-ref\1"
+savepath = r"C:\Users\akashdasgupta\Desktop\Peoples_test_samples\aug\00385A-ALD_thickness-ref\white"
 # whitepath= r"\\cmfs1.physics.ox.ac.uk\cm\akashdasgupta\Data\EL_setup\first_data\test_data\example_name\white"
 
 #*************************************************** 
@@ -106,8 +111,8 @@ else:
 kchan.reset()
 kchan.source.output = kchan.OUTPUT_ON
 # Not sure if I need this, setting to open circuit:
-kchan.source.func = kchan.OUTPUT_DCAMPS
-kchan.source.leveli = 0 
+kchan.source.func = kchan.OUTPUT_DCVOLTS
+kchan.source.levelv = 0 
 # End of setup
 #####################################################################################################
 
@@ -147,24 +152,24 @@ def int_sweep_oc(vstep, num_snaps, savepath):
         num_refs += 1
 
     ps.write("OUTPUT ON")
-    for nominal_v in np.arange(2.6, 3.8,vstep):
+    # for nominal_v in np.arange(2.6, 3.8,vstep):
         
-        ps.write(f"VOLT {nominal_v}")
-        time.sleep(2)
-        vm = kchan.measure.v()
-        im = kchan.measure.i()
+    #     ps.write(f"VOLT {nominal_v}")
+    #     time.sleep(2)
+    #     vm = kchan.measure.v()
+    #     im = kchan.measure.i()
 
 
-        for i in range(num_snaps):
-            image = cam.snap()
-            imageio.imwrite(savepath + "\\" +"{:.3f}".format(nominal_v)+"_FORWARDS_"+str(i)+".tif", image)
-            image_index.append("{:.3f}".format(nominal_v)+"_FORWARDS_"+str(i)+".tif")
-        voltage.append(vm)
-        current.append(im)
-        ism = measure_ps_iv()
+    #     for i in range(num_snaps):
+    #         image = cam.snap()
+    #         imageio.imwrite(savepath + "\\" +"{:.3f}".format(nominal_v)+"_FORWARDS_"+str(i)+".tif", image)
+    #         image_index.append("{:.3f}".format(nominal_v)+"_FORWARDS_"+str(i)+".tif")
+    #     voltage.append(vm)
+    #     current.append(im)
+    #     ism = measure_ps_iv()
 
-        source_currents.append(ism)
-        nominal_voltages.append(nominal_v)
+    #     source_currents.append(ism)
+    #     nominal_voltages.append(nominal_v)
     
     for nominal_v in np.arange(3.9,2.6,-vstep):
         ps.write(f"VOLT {nominal_v}")
