@@ -27,8 +27,8 @@ class MulticompPro():
     def off(self):
         self.ps.write("OUTPUT OFF")
     
-    self set_voltage(value):
-        ps.write(f"VOLT {value}")
+    def set_voltage(self, value):
+        self.ps.write(f"VOLT {value}")
     
 
 
