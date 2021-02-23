@@ -5,7 +5,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 class ArdunioMux():
-    self.fudged_index = [1,2,3,4,5,6]
+    fudged_index = [1,2,3,4,5,6]
     def __init__(self):
         try:
             print("Attempting to connect to the Ardunio multiplexer...")
