@@ -29,6 +29,7 @@ class MulticompPro():
     
     def set_voltage(self, value):
         self.ps.write(f"VOLT {value}")
+        
     
 
 
