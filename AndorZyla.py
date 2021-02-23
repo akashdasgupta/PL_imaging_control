@@ -12,6 +12,10 @@ class Zyla():
             self.cam = Andor.AndorSDK3Camera()
             # We probably don't want any weird noise filtering:
             self.cam.set_value("SpuriousNoiseFilter", False)
+            self.cam.set_exposure(exposure_time)
+            self.cam.set_value("ElectronicShutteringMode", shutter_mode)
+            self.cam.set_value("SimplePreAmpGainControl",bit_depth_mode) 
+
             print("Done!\nCamera is cooling, please wait...")
             self.cam.set_cooler(True)
             while True:
