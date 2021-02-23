@@ -19,9 +19,16 @@ def make_cam_path(savepath):
     if os.path.isdir(savepath+'\\camera'):
         os.mkdir(savepath+'\\camera')
 
+def take_bg(cam, campath):
+    if os.path.isdir(campath+'\\refs'):
+        os.mkdir(campath+'\\refs')
+    for i in range(10):
+        cam.snap(campath+'\\refs\\'+"ref_"+i)
+
 def cam1sm1ps1(cam,sm, num_images=1, savepath='.', sm_channel='b'):
     """imaging, short circuit, light off"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     sm.set_sc(sm_channel)
     for i in range(num_images):
         cam.snap(savepath+'\\camera\\'+"SC_LED=0_"+i)
@@ -31,6 +38,7 @@ def cam1sm1ps1(cam,sm, num_images=1, savepath='.', sm_channel='b'):
 def cam1sm1ps2(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
     """imaging, short circuit, light_set at some specified value"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     sm.set_sc(sm_channel)
     ps.set_voltage(led_v)
     ps.on()
@@ -44,6 +52,7 @@ def cam1sm1ps2(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
 def cam1sm1ps3(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, savepath='.', sm_channel='b'):
     """imaging, short circuit, light sweeping intensity"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     sm.set_sc(sm_channel)
     ps.set_voltage(0)
     ps.on()
@@ -64,6 +73,7 @@ def cam1sm1ps3(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, savepath
 def cam1sm2ps1(cam,sm, num_images=1, savepath='.', sm_channel='b'):
     """imaging, open circuit, light off"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     sm.set_oc(sm_channel)
     for i in range(num_images):
         cam.snap(savepath+'\\camera\\'+"OC_LED=0_"+i)
@@ -73,6 +83,7 @@ def cam1sm2ps1(cam,sm, num_images=1, savepath='.', sm_channel='b'):
 def cam1sm2ps2(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
     """imaging, open circuit, light_set at some specified value"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     sm.set_oc(sm_channel)
     ps.set_voltage(led_v)
     ps.on()
@@ -86,6 +97,7 @@ def cam1sm2ps2(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
 def cam1sm2ps3(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, savepath='.', sm_channel='b'):
     """imaging, open circuit, light sweeping intensity"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     sm.set_oc(sm_channel)
     ps.set_voltage(0)
     ps.on()
@@ -106,6 +118,7 @@ def cam1sm2ps3(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, savepat
 def cam1sm3ps1(cam,sm, cell_voltage, num_images=1, savepath='.', sm_channel='b'):
     """imaging, set voltage level, light off"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     sm.set_voltage_level(cell_voltage, sm_channel)
 
     for i in range(num_images):
@@ -116,6 +129,7 @@ def cam1sm3ps1(cam,sm, cell_voltage, num_images=1, savepath='.', sm_channel='b')
 def cam1sm3ps2(cam,sm, ps, cell_voltage, led_v, num_images=1, savepath='.', sm_channel='b'):
     """imaging, set voltage, light_set at some specified value"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     sm.set_voltage_level(cell_voltage, sm_channel)
     ps.set_voltage(led_v)
     ps.on()
@@ -129,6 +143,7 @@ def cam1sm3ps2(cam,sm, ps, cell_voltage, led_v, num_images=1, savepath='.', sm_c
 def cam1sm3ps3(cam,sm, ps, cell_voltage, led_vmin, led_vmax, led_vstep, num_images=1, savepath='.', sm_channel='b'):
     """imaging, set voltage, light sweeping intensity"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     sm.set_voltage_level(cell_voltage, sm_channel)
     ps.set_voltage(0)
     ps.on()
@@ -149,6 +164,7 @@ def cam1sm3ps3(cam,sm, ps, cell_voltage, led_vmin, led_vmax, led_vstep, num_imag
 def cam1sm4ps1(cam,sm, cell_current, num_images=1, savepath='.', sm_channel='b'):
     """imaging, set current level, light off"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     sm.set_current_level(cell_current, sm_channel)
 
     for i in range(num_images):
@@ -159,6 +175,7 @@ def cam1sm4ps1(cam,sm, cell_current, num_images=1, savepath='.', sm_channel='b')
 def cam1sm4ps2(cam,sm, ps, cell_current, led_v, num_images=1, savepath='.', sm_channel='b'):
     """imaging, set current level, light_set at some specified value"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     sm.set_current_level(cell_current, sm_channel)
     ps.set_voltage(led_v)
     ps.on()
@@ -172,6 +189,7 @@ def cam1sm4ps2(cam,sm, ps, cell_current, led_v, num_images=1, savepath='.', sm_c
 def cam1sm4ps3(cam,sm, ps, cell_current, led_vmin, led_vmax, led_vstep, num_images=1, savepath='.', sm_channel='b'):
     """imaging, set current level, light sweeping intensity"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     sm.set_current_level(cell_current, sm_channel)
     ps.set_voltage(0)
     ps.on()
@@ -192,6 +210,7 @@ def cam1sm4ps3(cam,sm, ps, cell_current, led_vmin, led_vmax, led_vstep, num_imag
 def cam1sm5ps1(cam,sm, cell_vmin, cell_vmax, cell_vstep, num_images=1, savepath='.', sm_channel='b'):
     """imaging, voltage sweep on cell, light off"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     for cell_voltage in np.arange(cell_vmin, cell_vmax+cell_vstep, cell_vstep):
         sm.set_voltage_level(cell_voltage, sm_channel)
         for i in range(num_images):
@@ -203,6 +222,7 @@ def cam1sm5ps1(cam,sm, cell_vmin, cell_vmax, cell_vstep, num_images=1, savepath=
 def cam1sm5ps2(cam,sm, ps, cell_vmin, cell_vmax, cell_vstep, led_v, num_images=1, savepath='.', sm_channel='b'):
     """imaging, set current level, light_set at some specified value"""
     make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
     ps.set_voltage(led_v)
     ps.on()
     for cell_voltage in np.arange(cell_vmin, cell_vmax+cell_vstep, cell_vstep):
