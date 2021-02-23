@@ -30,11 +30,11 @@ class Keithley():
             self.currents = []
 
     def measure(self, channel='b'):
-        if channel == 'a':
+        if channel.lower() == 'a':
             v = self.sm.smua.measure.v()
             i = self.sm.smua.measure.i()
             return v,i
-        elif channel == 'b':
+        elif channel.lower() == 'b':
             v = self.sm.smub.measure.v()
             i = self.sm.smub.measure.i()
             return v,i
@@ -45,12 +45,12 @@ class Keithley():
             return v,i
     
     def set_voltage_level(self, level, channel='b'):
-        if channel == 'a':
+        if channel.lower() == 'a':
             self.sm.smua.smua.reset()
             self.sm.smua.source.output = self.sm.source.OUTPUT_ON
             self.sm.smua.source.func = self.sm.source.OUTPUT_DCVOLTS
             self.sm.smua.source.levelv = level 
-        elif channel == 'b':
+        elif channel.lower() == 'b':
             self.sm.smub.smua.reset()
             self.sm.smub.source.output = self.sm.source.OUTPUT_ON
             self.sm.smub.source.func = self.sm.source.OUTPUT_DCVOLTS
@@ -63,12 +63,12 @@ class Keithley():
             self.sm.smub.source.levelv = level      
 
     def set_current_level(self, level, channel='b'):
-        if channel == 'a':
+        if channel.lower() == 'a':
             self.sm.smua.smua.reset()
             self.sm.smua.source.output = self.sm.source.OUTPUT_ON
             self.sm.smua.source.func = self.sm.source.OUTPUT_DCAMPS
             self.sm.smua.source.leveli = level 
-        elif channel == 'b':
+        elif channel.lower() == 'b':
             self.sm.smub.smua.reset()
             self.sm.smub.source.output = self.sm.source.OUTPUT_ON
             self.sm.smub.source.func = self.sm.source.OUTPUT_DCAMPS
