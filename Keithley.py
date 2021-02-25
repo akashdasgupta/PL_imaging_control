@@ -46,36 +46,36 @@ class Keithley():
     
     def set_voltage_level(self, level, channel='b'):
         if channel.lower() == 'a':
-            self.sm.smua.smua.reset()
+            self.sm.smua.reset()
             self.sm.smua.source.output = self.sm.source.OUTPUT_ON
             self.sm.smua.source.func = self.sm.source.OUTPUT_DCVOLTS
             self.sm.smua.source.levelv = level 
         elif channel.lower() == 'b':
-            self.sm.smub.smua.reset()
+            self.sm.smub.reset()
             self.sm.smub.source.output = self.sm.source.OUTPUT_ON
             self.sm.smub.source.func = self.sm.source.OUTPUT_DCVOLTS
             self.sm.smub.source.levelv = level 
         else:
             print("The provided channel:", channel,"was invalid. Defaulting to b...")
-            self.sm.smub.smua.reset()
+            self.sm.smub.reset()
             self.sm.smub.source.output = self.sm.source.OUTPUT_ON
             self.sm.smub.source.func = self.sm.source.OUTPUT_DCVOLTS
             self.sm.smub.source.levelv = level      
 
     def set_current_level(self, level, channel='b'):
         if channel.lower() == 'a':
-            self.sm.smua.smua.reset()
+            self.sm.smua.reset()
             self.sm.smua.source.output = self.sm.source.OUTPUT_ON
             self.sm.smua.source.func = self.sm.source.OUTPUT_DCAMPS
             self.sm.smua.source.leveli = level 
         elif channel.lower() == 'b':
-            self.sm.smub.smua.reset()
+            self.sm.smub.reset()
             self.sm.smub.source.output = self.sm.source.OUTPUT_ON
             self.sm.smub.source.func = self.sm.source.OUTPUT_DCAMPS
             self.sm.smub.source.leveli = level 
         else:
             print("The provided channel:", channel,"was invalid. Defaulting to b...")
-            self.sm.smub.smua.reset()
+            self.sm.smub.reset()
             self.sm.smub.source.output = self.sm.source.OUTPUT_ON
             self.sm.smub.source.func = self.sm.source.OUTPUT_DCAMPS
             self.sm.smub.source.leveli = level    
