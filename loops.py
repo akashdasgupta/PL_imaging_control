@@ -109,7 +109,6 @@ def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, savepat
     sm.set_oc(sm_channel)
     ps.set_voltage(led_vmin)
     time.sleep(1)
-
     ps.on()
 
     ps_data = []
