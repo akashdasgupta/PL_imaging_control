@@ -88,10 +88,10 @@ class Keithley():
     def loop_measure(self, channel='b', end=False):
         if end:
             vs = self.voltages
-            is = self.currents
+            Is = self.currents
             self.voltages = []
             self.currents = []
-            return vs, is
+            return vs, Is
         else:
             v,i = self.measure(channel)
             self.voltages.append(v)
