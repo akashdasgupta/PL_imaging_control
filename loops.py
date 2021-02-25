@@ -32,6 +32,7 @@ def cam1sm1ps0(cam,sm, num_images=1, savepath='.', sm_channel='b'):
     sm.set_sc(sm_channel)
     for i in range(num_images):
         cam.snap(savepath+'\\camera\\'+"SC_LED=0_"+i)
+    cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
     return sm_data
 
@@ -43,7 +44,8 @@ def cam1sm1ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
     ps.set_voltage(led_v)
     ps.on()
     for i in range(num_images):
-        cam.snap(savepath+'\\'+"SC_LED="+str(led_v)+"_"+i)
+        cam.snap(savepath+'\\camera\\'+"SC_LED="+str(led_v)+"_"+i)
+    cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
     ps_data = led_v
     ps.off()
@@ -52,7 +54,7 @@ def cam1sm1ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
 def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, savepath='.', sm_channel='b'):
     """imaging, short circuit, light sweeping intensity"""
     make_cam_path(savepath)
-    take_bg(cam, savepath+'\\camera')
+    take_bg(cam, savepath+"\\camera")
     sm.set_sc(sm_channel)
     ps.set_voltage(0)
     ps.on()
@@ -61,9 +63,11 @@ def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, savepath
     for nominal_v in np.arange(led_vmin,led_vmax+led_vstep, led_vstep):
         ps.set_voltage(nominal_v)
         for i in range(num_images):
-            cam.snap(savepath+'\\'+"SC_LED="+str(nominal_v)+"_"+i)
+            cam.snap(savepath+'\\camera\\'+"SC_LED="+str(nominal_v)+"_"+i)
         sm.loop_measure(sm_channel)
         ps_data.append(nominal_v)
+    cam.dump_settings(savepath+'\\camera')
+
 
     ps.off()
     sm_data = sm.loop_measure(end=True)
@@ -77,6 +81,7 @@ def cam1sm2ps0(cam,sm, num_images=1, savepath='.', sm_channel='b'):
     sm.set_oc(sm_channel)
     for i in range(num_images):
         cam.snap(savepath+'\\camera\\'+"OC_LED=0_"+i)
+    cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
     return sm_data
 
@@ -88,7 +93,8 @@ def cam1sm2ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
     ps.set_voltage(led_v)
     ps.on()
     for i in range(num_images):
-        cam.snap(savepath+'\\'+"OC_LED="+str(led_v)+"_"+i)
+        cam.snap(savepath+'\\camera\\'+"OC_LED="+str(led_v)+"_"+i)
+    cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
     ps_data = led_v
     ps.off()
@@ -106,9 +112,11 @@ def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, savepat
     for nominal_v in np.arange(led_vmin,led_vmax+led_vstep, led_vstep):
         ps.set_voltage(nominal_v)
         for i in range(num_images):
-            cam.snap(savepath+'\\'+"OC_LED="+str(nominal_v)+"_"+i)
+            cam.snap(savepath+'\\camera\\'+"OC_LED="+str(nominal_v)+"_"+i)
         sm.loop_measure(sm_channel)
         ps_data.append(nominal_v)
+    cam.dump_settings(savepath+'\\camera')
+
 
     ps.off()
     sm_data = sm.loop_measure(end=True)
@@ -123,6 +131,7 @@ def cam1sm3ps0(cam,sm, cell_voltage, num_images=1, savepath='.', sm_channel='b')
 
     for i in range(num_images):
         cam.snap(savepath+'\\camera\\'+"V="+str(cell_voltage)+"_LED=0_"+i)
+    cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
     return sm_data
 
@@ -134,7 +143,8 @@ def cam1sm3ps1(cam,sm, ps, cell_voltage, led_v, num_images=1, savepath='.', sm_c
     ps.set_voltage(led_v)
     ps.on()
     for i in range(num_images):
-        cam.snap(savepath+'\\'+"V="+str(cell_voltage)+"_LED="+str(led_v)+"_"+i)
+        cam.snap(savepath+'\\camera\\'+"V="+str(cell_voltage)+"_LED="+str(led_v)+"_"+i)
+    cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
     ps_data = led_v
     ps.off()
@@ -152,9 +162,10 @@ def cam1sm3ps2(cam,sm, ps, cell_voltage, led_vmin, led_vmax, led_vstep, num_imag
     for nominal_v in np.arange(led_vmin,led_vmax+led_vstep, led_vstep):
         ps.set_voltage(nominal_v)
         for i in range(num_images):
-            cam.snap(savepath+'\\'+"V="+str(cell_voltage)+"_LED="+str(nominal_v)+"_"+i)
+            cam.snap(savepath+'\\camera\\'+"V="+str(cell_voltage)+"_LED="+str(nominal_v)+"_"+i)
         sm.loop_measure(sm_channel)
         ps_data.append(nominal_v)
+    cam.dump_settings(savepath+'\\camera')
 
     ps.off()
     sm_data = sm.loop_measure(end=True)
@@ -169,6 +180,7 @@ def cam1sm4ps0(cam,sm, cell_current, num_images=1, savepath='.', sm_channel='b')
 
     for i in range(num_images):
         cam.snap(savepath+'\\camera\\'+"I="+str(cell_current)+"_LED=0_"+i)
+    cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
     return sm_data
 
@@ -180,7 +192,8 @@ def cam1sm4ps1(cam,sm, ps, cell_current, led_v, num_images=1, savepath='.', sm_c
     ps.set_voltage(led_v)
     ps.on()
     for i in range(num_images):
-        cam.snap(savepath+'\\'+"I="+str(cell_current)+"_LED="+str(led_v)+"_"+i)
+        cam.snap(savepath+'\\camera\\'+"I="+str(cell_current)+"_LED="+str(led_v)+"_"+i)
+    cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
     ps_data = led_v
     ps.off()
@@ -198,9 +211,10 @@ def cam1sm4ps2(cam,sm, ps, cell_current, led_vmin, led_vmax, led_vstep, num_imag
     for nominal_v in np.arange(led_vmin,led_vmax+led_vstep, led_vstep):
         ps.set_voltage(nominal_v)
         for i in range(num_images):
-            cam.snap(savepath+'\\'+"I="+str(cell_current)+"_LED="+str(nominal_v)+"_"+i)
+            cam.snap(savepath+'\\camera\\'+"I="+str(cell_current)+"_LED="+str(nominal_v)+"_"+i)
         sm.loop_measure(sm_channel)
         ps_data.append(nominal_v)
+    cam.dump_settings(savepath+'\\camera')
 
     ps.off()
     sm_data = sm.loop_measure(end=True)
@@ -216,6 +230,7 @@ def cam1sm5ps0(cam,sm, cell_vmin, cell_vmax, cell_vstep, num_images=1, savepath=
         for i in range(num_images):
             cam.snap(savepath+'\\camera\\'+"V="+str(cell_voltage)+"_LED=0_"+i)
         sm.loop_measure(sm_channel)
+    cam.dump_settings(savepath+'\\camera')
     sm_data = sm.loop_measure(end=True)
     return sm_data
 
@@ -228,8 +243,9 @@ def cam1sm5ps1(cam,sm, ps, cell_vmin, cell_vmax, cell_vstep, led_v, num_images=1
     for cell_voltage in np.arange(cell_vmin, cell_vmax+cell_vstep, cell_vstep):
         sm.set_voltage_level(cell_voltage, sm_channel)
         for i in range(num_images):
-            cam.snap(savepath+'\\'+"V="+str(cell_voltage)+"_LED="+str(led_v)+"_"+i)
+            cam.snap(savepath+'\\camera\\'+"V="+str(cell_voltage)+"_LED="+str(led_v)+"_"+i)
         sm.loop_measure(sm_channel)
+    cam.dump_settings(savepath+'\\camera')
     sm_data = sm.loop_measure(end=True)
     ps_data = led_v
     ps.off()
