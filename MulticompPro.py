@@ -12,12 +12,12 @@ class MulticompPro():
     def __init__(self):
         try:
             print("Attempting to connect to Multicomp power supply...")
-            ps = rm.open_resource(power_supply_string)
-            ps.read_termination = '\n'
-            ps.write_termination = '\n'
+            self.ps = rm.open_resource(power_supply_string)
+            self.ps.read_termination = '\n'
+            self.ps.write_termination = '\n'
             # Safety: 
-            ps.write("OUTPUT OFF")
-            ps.write("CURR:LIM 2.01")
+            self.ps.write("OUTPUT OFF")
+            self.ps.write("CURR:LIM 2.01")
             print("Done!")
         except:
             print('Could not initilise Multicomp power supply (for LED)! ID given:', power_supply_string)
