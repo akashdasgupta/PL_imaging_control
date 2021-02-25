@@ -38,6 +38,8 @@ class Zyla():
     def snap(self, filename):
         image = self.cam.snap()
         imageio.imwrite(filename+".tif", image) # tif is the only thing that works!
+    def close(self):
+        self.cam.close()
 
 
 
