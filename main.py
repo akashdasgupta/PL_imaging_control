@@ -8,7 +8,8 @@ import csv
 
 #######################################
 # EDIT HERE: 
-savepath = '.'
+savepath = r"C:\Users\akashdasgupta\Desktop\new_script_test\material_1\2"
+mux_index = 2
 
 # Camera:
 cam_exposure_time = 0.001 # s
@@ -58,6 +59,7 @@ LOOPS AVALIABLE:
         * 1 = Set voltage
         * 2 = Voltage sweep
 '''
+Mux.switch_pix(mux_index)
 sm_data, ps_data = cam1sm2ps2(Cam, Sm, Ps, ps_vmin, ps_vmax, 
                              ps_vstep,num_images=1, 
                              savepath=savepath,sm_channel='b')
@@ -71,3 +73,7 @@ with open(savepath+'\\LED_power_supply.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     for row in zip(ps_data):
         writer.writerow([row])
+
+Ps.close()
+Mux.close()
+Cam.close()
