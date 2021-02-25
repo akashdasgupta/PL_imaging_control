@@ -16,14 +16,14 @@ import os
 import numpy as np
 
 def make_cam_path(savepath):
-    if os.path.isdir(savepath+'\\camera'):
+    if not os.path.isdir(savepath+'\\camera'):
         os.mkdir(savepath+'\\camera')
 
 def take_bg(cam, campath):
-    if os.path.isdir(campath+'\\refs'):
+    if not os.path.isdir(campath+'\\refs'):
         os.mkdir(campath+'\\refs')
     for i in range(10):
-        cam.snap(campath+'\\refs\\'+"ref_"+i)
+        cam.snap(campath+'\\refs\\'+"ref_"+str(i))
 
 def cam1sm1ps0(cam,sm, num_images=1, savepath='.', sm_channel='b'):
     """imaging, short circuit, light off"""
