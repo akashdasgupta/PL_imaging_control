@@ -63,7 +63,7 @@ def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, savepath
     for nominal_v in np.arange(led_vmin,led_vmax+led_vstep, led_vstep):
         ps.set_voltage(nominal_v)
         for i in range(num_images):
-            cam.snap(savepath+'\\camera\\'+"SC_LED="+str(nominal_v)+"_"+str(i))
+            cam.snap(savepath+'\\camera\\'+"SC_LED="+"{:.3f}".format(nominal_v)+"_"+str(i))
         sm.loop_measure(sm_channel)
         ps_data.append(nominal_v)
     cam.dump_settings(savepath+'\\camera')
@@ -112,7 +112,7 @@ def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, savepat
     for nominal_v in np.arange(led_vmin,led_vmax+led_vstep, led_vstep):
         ps.set_voltage(nominal_v)
         for i in range(num_images):
-            cam.snap(savepath+'\\camera\\'+"OC_LED="+str(nominal_v)+"_"+str(i))
+            cam.snap(savepath+'\\camera\\'+"OC_LED="+"{:.3f}".format(nominal_v)+"_"+str(i))
         sm.loop_measure(sm_channel)
         ps_data.append(nominal_v)
     cam.dump_settings(savepath+'\\camera')
@@ -162,7 +162,7 @@ def cam1sm3ps2(cam,sm, ps, cell_voltage, led_vmin, led_vmax, led_vstep, num_imag
     for nominal_v in np.arange(led_vmin,led_vmax+led_vstep, led_vstep):
         ps.set_voltage(nominal_v)
         for i in range(num_images):
-            cam.snap(savepath+'\\camera\\'+"V="+str(cell_voltage)+"_LED="+str(nominal_v)+"_"+str(i))
+            cam.snap(savepath+'\\camera\\'+"V="+str(cell_voltage)+"_LED="+"{:.3f}".format(nominal_v)+"_"+str(i))
         sm.loop_measure(sm_channel)
         ps_data.append(nominal_v)
     cam.dump_settings(savepath+'\\camera')
@@ -211,7 +211,7 @@ def cam1sm4ps2(cam,sm, ps, cell_current, led_vmin, led_vmax, led_vstep, num_imag
     for nominal_v in np.arange(led_vmin,led_vmax+led_vstep, led_vstep):
         ps.set_voltage(nominal_v)
         for i in range(num_images):
-            cam.snap(savepath+'\\camera\\'+"I="+str(cell_current)+"_LED="+str(nominal_v)+"_"+str(i))
+            cam.snap(savepath+'\\camera\\'+"I="+str(cell_current)+"_LED="+"{:.3f}".format(nominal_v)+"_"+str(i))
         sm.loop_measure(sm_channel)
         ps_data.append(nominal_v)
     cam.dump_settings(savepath+'\\camera')
