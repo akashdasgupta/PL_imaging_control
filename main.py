@@ -71,7 +71,7 @@ with open(savepath+'\\source_meter.csv', 'w', newline='') as file:
 
 with open(savepath+'\\LED_power_supply.csv', 'w', newline='') as file:
     writer = csv.writer(file)
-    for row in zip(ps_data):
+    for row in ps_data:
         writer.writerow([row])
 
 Ps.close()
