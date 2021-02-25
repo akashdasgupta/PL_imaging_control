@@ -39,7 +39,7 @@ class Zyla():
         image = self.cam.snap()
         imageio.imwrite(filename+".tif", image) # tif is the only thing that works!
     def dump_settings(self, path):
-        with open(self.path + "\\" + "camera_setting_dump.txt",'w') as file:
+        with open(path + "\\" + "camera_setting_dump.txt",'w') as file:
             print(cam.get_all_values(), file=file)
     def close(self):
         self.cam.close()
