@@ -12,7 +12,7 @@ savepath = r"C:\Users\akashdasgupta\Desktop\new_script_test\material_1\2"
 mux_index = 2
 
 # Camera:
-cam_exposure_time = 0.001 # s
+cam_exposure_time = 0.1 # s
 cam_shutter_mode = 0 # 0 = rolling, 1 = global
 cam_bit_depth = 2 # 0 = 12-bit (high well capacity), 1 = 12-bit (low noise), 16-bit (low noise & high well capacity)
 num_images = 1 # How many repeats to take
@@ -24,14 +24,14 @@ sm_current = 0.020 # (A) For if you use set current
 # For sweep
 sm_vmin = 0
 sm_vmax = 1.1
-sm_vstep = 0.001
+sm_vstep = 0.01
 
 # LED Power supply:
 ps_voltage = 2.6 # V, for single voltage
 #for sweep
-ps_vmin = 2.55
-ps_vmax = 2.8
-ps_vstep = 0.001
+ps_vmin = 2.8
+ps_vmax = 2.55
+ps_vstep = -0.01
 
 #######################################
 
