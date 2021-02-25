@@ -13,6 +13,7 @@ from Keithley import *
 from ArdunioMux import *
 
 import os
+import time
 import numpy as np
 
 def make_cam_path(savepath):
@@ -56,7 +57,8 @@ def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, savepath
     make_cam_path(savepath)
     take_bg(cam, savepath+"\\camera")
     sm.set_sc(sm_channel)
-    ps.set_voltage(0)
+    ps.set_voltage(led_vmin)
+    time.sleep(1)
     ps.on()
 
     ps_data = []
@@ -105,7 +107,9 @@ def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, savepat
     make_cam_path(savepath)
     take_bg(cam, savepath+'\\camera')
     sm.set_oc(sm_channel)
-    ps.set_voltage(0)
+    ps.set_voltage(led_vmin)
+    time.sleep(1)
+
     ps.on()
 
     ps_data = []
@@ -155,7 +159,8 @@ def cam1sm3ps2(cam,sm, ps, cell_voltage, led_vmin, led_vmax, led_vstep, num_imag
     make_cam_path(savepath)
     take_bg(cam, savepath+'\\camera')
     sm.set_voltage_level(cell_voltage, sm_channel)
-    ps.set_voltage(0)
+    ps.set_voltage(led_vmin)
+    time.sleep(1)
     ps.on()
 
     ps_data = []
@@ -204,7 +209,8 @@ def cam1sm4ps2(cam,sm, ps, cell_current, led_vmin, led_vmax, led_vstep, num_imag
     make_cam_path(savepath)
     take_bg(cam, savepath+'\\camera')
     sm.set_current_level(cell_current, sm_channel)
-    ps.set_voltage(0)
+    ps.set_voltage(led_vmin)
+    time.sleep(1)
     ps.on()
 
     ps_data = []
@@ -270,7 +276,8 @@ def cam0sm1ps1(sm, ps, led_v, sm_channel='b'):
 def cam0sm1ps2(sm, ps, led_vmin, led_vmax, led_vstep, sm_channel='b'):
     """imaging, short circuit, light sweeping intensity"""
     sm.set_sc(sm_channel)
-    ps.set_voltage(0)
+    ps.set_voltage(led_vmin)
+    time.sleep(1)
     ps.on()
 
     ps_data = []
@@ -300,7 +307,8 @@ def cam0sm2ps1(sm, ps, led_v, sm_channel='b'):
 def cam0sm2ps2(sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, savepath='.', sm_channel='b'):
     """imaging, open circuit, light sweeping intensity"""
     sm.set_oc(sm_channel)
-    ps.set_voltage(0)
+    ps.set_voltage(led_vmin)
+    time.sleep(1)
     ps.on()
 
     ps_data = []
@@ -330,7 +338,8 @@ def cam0sm3ps1(sm, ps, cell_voltage, led_v, sm_channel='b'):
 def cam0sm3ps2(sm, ps, cell_voltage, led_vmin, led_vmax, led_vstep, sm_channel='b'):
     """Set voltage, light sweeping intensity"""
     sm.set_voltage_level(cell_voltage, sm_channel)
-    ps.set_voltage(0)
+    ps.set_voltage(led_vmin)
+    time.sleep(1)
     ps.on()
 
     ps_data = []
@@ -360,7 +369,8 @@ def cam0sm4ps1(sm, ps, cell_current, led_v, num_images=1, savepath='.', sm_chann
 def cam0sm4ps2(sm, ps, cell_current, led_vmin, led_vmax, led_vstep, sm_channel='b'):
     """Set current level, light sweeping intensity"""
     sm.set_current_level(cell_current, sm_channel)
-    ps.set_voltage(0)
+    ps.set_voltage(led_vmin)
+    time.sleep(1)
     ps.on()
 
     ps_data = []
