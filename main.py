@@ -60,10 +60,14 @@ LOOPS AVALIABLE:
         * 2 = Voltage sweep
 '''
 Mux.switch_pix(mux_index)
+
+print("Taking readings .....")
 sm_data, ps_data = cam1sm2ps2(Cam, Sm, Ps, ps_vmin, ps_vmax, 
                              ps_vstep,num_images=1, 
                              savepath=savepath,sm_channel='b')
-                        
+
+print("Done!\nSaving datafiles ....")
+
 with open(savepath+'\\source_meter.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     for row in zip(sm_data[0], sm_data[1]):
@@ -72,8 +76,12 @@ with open(savepath+'\\source_meter.csv', 'w', newline='') as file:
 with open(savepath+'\\LED_power_supply.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     for row in ps_data:
-        writer.writerow([row])
+        writer.writerow(["{:.3f}".format(float(row))])
+
+print("Done!\nClosing devices...")
 
 Ps.close()
 Mux.close()
 Cam.close()
+
+print("Done!\nRemember to open box. Make sure LED is off before opening box, just in case!")
