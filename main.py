@@ -41,6 +41,18 @@ Sm = Keithley()
 Mux = ArdunioMux()
 Cam = Zyla(cam_exposure_time,cam_bit_depth,cam_shutter_mode)
 
+def exposure_maker(nominal_v):
+    if 2.55 <= nominal_v <= 2.6:
+        return 10
+    elif 2.6 < nominal_v <=2.62:
+        return 5
+    elif 2.62 < nominal_v <= 2.68:
+        return 1
+    elif 2.68 < nominal_v <= 2.7:
+        return 0.5
+    else:
+        return 0.1
+
 '''
 LOOPS AVALIABLE: 
 * Format = cam[index]sm[index]ps[index]
@@ -62,9 +74,10 @@ LOOPS AVALIABLE:
 Mux.switch_pix(mux_index)
 
 print("Taking readings .....")
+exposure_list = exposure_maker(np.arange( ps_vmin, ps_vmax+ps_vstep, ps_vstep))
 sm_data, ps_data = cam1sm2ps2(Cam, Sm, Ps, ps_vmin, ps_vmax, 
                              ps_vstep,num_images=1, 
-                             savepath=savepath,sm_channel='b')
+                             savepath=savepath,sm_channel='b', exposure_list=exposure_list)
 
 print("Done!\nSaving datafiles ....")
 
