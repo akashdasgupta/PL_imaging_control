@@ -22,3 +22,16 @@ class ArdunioMux():
     
     def close(self):
         self.mux.close()
+
+if __name__ == "__main__":
+    mux = ArdunioMux()
+    while True:
+        choice = input("Channel (or q to quit): ")
+        try:
+            mux.switch_pix(int(choice))
+        except :
+            if choice.lower() == 'q':
+                mux.close()
+                exit()
+            else:
+                continue
