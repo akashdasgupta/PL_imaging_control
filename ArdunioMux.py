@@ -17,7 +17,7 @@ class ArdunioMux():
             self.mux=None
     
     def switch_pix(self, index):
-        write_index = self.fudged_index[index+1]
+        write_index = self.fudged_index[index-1]
         self.mux.write(str(write_index).encode('UTF-8'))
     
     def close(self):
