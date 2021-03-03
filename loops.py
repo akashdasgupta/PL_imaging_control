@@ -56,8 +56,17 @@ def cam1sm1ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
     take_bg(cam, savepath+'\\camera',start=10)
     return sm_data, ps_data
 
-def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, savepath='.', sm_channel='b'):
+def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, exposure_list = None, savepath='.', sm_channel='b'):
     """imaging, short circuit, light sweeping intensity"""
+    if not exposure_list:
+        exposure_list = 0.1
+        print("Using default exposure, 0.1s")
+    
+    try:
+        is_iter = iter(exposure_list)
+    except TypeError:
+        exposure_list = [exposure_list for i in range(len(np.arange(led_vmin,led_vmax+led_vstep, led_vstep)))]
+
     make_cam_path(savepath)
     take_bg(cam, savepath+"\\camera")
     sm.set_sc(sm_channel)
@@ -67,6 +76,7 @@ def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, savepath
     ps_data = []
     for nominal_v in np.arange(led_vmin,led_vmax+led_vstep, led_vstep):
         ps.set_voltage(nominal_v)
+        cam.SetParams(exposure=exposure_list[i])
         time.sleep(3)
         for i in range(num_images):
             cam.snap(savepath+'\\camera\\'+"SC_LED="+"{:.3f}".format(nominal_v)+"_"+str(i))
@@ -110,6 +120,15 @@ def cam1sm2ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
 
 def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, exposure_list = None, savepath='.', sm_channel='b'):
     """imaging, open circuit, light sweeping intensity"""
+    if not exposure_list:
+        exposure_list = 0.1
+        print("Using default exposure, 0.1s")
+    
+    try:
+        is_iter = iter(exposure_list)
+    except TypeError:
+        exposure_list = [exposure_list for i in range(len(np.arange(led_vmin,led_vmax+led_vstep, led_vstep)))]
+
     make_cam_path(savepath)
     take_bg(cam, savepath+'\\camera')
     sm.set_oc(sm_channel)
@@ -119,9 +138,7 @@ def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, exposur
     ps_data = []
     for i, nominal_v in enumerate(np.arange(led_vmin,led_vmax+led_vstep, led_vstep)):
         ps.set_voltage(nominal_v)
-        if exposure_list:
-            cam.SetParams(exposure=exposure_list[i])
-
+        cam.SetParams(exposure=exposure_list[i])
         time.sleep(3)
         for i in range(num_images):
             cam.snap(savepath+'\\camera\\'+"OC_LED="+"{:.3f}".format(nominal_v)+"_"+str(i))
