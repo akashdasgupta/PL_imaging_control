@@ -21,11 +21,11 @@ def make_cam_path(savepath):
     if not os.path.isdir(savepath+'\\camera'):
         os.mkdir(savepath+'\\camera')
 
-def take_bg(cam, campath):
+def take_bg(cam, campath, start=0):
     if not os.path.isdir(campath+'\\refs'):
         os.mkdir(campath+'\\refs')
     for i in range(10):
-        cam.snap(campath+'\\refs\\'+"ref_"+str(i))
+        cam.snap(campath+f"\\refs\\ref_{i+start}")
 
 def cam1sm1ps0(cam,sm, num_images=1, savepath='.', sm_channel='b'):
     """imaging, short circuit, light off"""
@@ -36,6 +36,7 @@ def cam1sm1ps0(cam,sm, num_images=1, savepath='.', sm_channel='b'):
         cam.snap(savepath+'\\camera\\'+"SC_LED=0_"+str(i))
     cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
+    take_bg(cam, savepath+'\\camera',start=10)
     return sm_data
 
 def cam1sm1ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
@@ -52,6 +53,7 @@ def cam1sm1ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
     sm_data = sm.measure(sm_channel)
     ps_data = led_v
     ps.off()
+    take_bg(cam, savepath+'\\camera',start=10)
     return sm_data, ps_data
 
 def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, savepath='.', sm_channel='b'):
@@ -71,9 +73,8 @@ def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, savepath
         sm.loop_measure(sm_channel)
         ps_data.append(nominal_v)
     cam.dump_settings(savepath+'\\camera')
-
-
     ps.off()
+    take_bg(cam, savepath+'\\camera',start=10)
     sm_data = sm.loop_measure(end=True)
 
     return sm_data, ps_data
@@ -87,6 +88,7 @@ def cam1sm2ps0(cam,sm, num_images=1, savepath='.', sm_channel='b'):
         cam.snap(savepath+'\\camera\\'+"OC_LED=0_"+str(i))
     cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
+    take_bg(cam, savepath+'\\camera',start=10)
     return sm_data
 
 def cam1sm2ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
@@ -103,6 +105,7 @@ def cam1sm2ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
     sm_data = sm.measure(sm_channel)
     ps_data = led_v
     ps.off()
+    take_bg(cam, savepath+'\\camera',start=10)
     return sm_data, ps_data
 
 def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, exposure_list = None, savepath='.', sm_channel='b'):
@@ -129,9 +132,8 @@ def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, exposur
         writer = csv.writer(file)
         for row in zip(np.arange(led_vmin,led_vmax+led_vstep, led_vstep), exposure_list):
             writer.writerow(row)
-
-
     ps.off()
+    take_bg(cam, savepath+'\\camera',start=10)
     sm_data = sm.loop_measure(end=True)
 
     return sm_data, ps_data
@@ -146,6 +148,7 @@ def cam1sm3ps0(cam,sm, cell_voltage, num_images=1, savepath='.', sm_channel='b')
         cam.snap(savepath+'\\camera\\'+"V="+str(cell_voltage)+"_LED=0_"+str(i))
     cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
+    take_bg(cam, savepath+'\\camera',start=10)
     return sm_data
 
 def cam1sm3ps1(cam,sm, ps, cell_voltage, led_v, num_images=1, savepath='.', sm_channel='b'):
@@ -162,6 +165,7 @@ def cam1sm3ps1(cam,sm, ps, cell_voltage, led_v, num_images=1, savepath='.', sm_c
     sm_data = sm.measure(sm_channel)
     ps_data = led_v
     ps.off()
+    take_bg(cam, savepath+'\\camera',start=10)
     return sm_data, ps_data
 
 def cam1sm3ps2(cam,sm, ps, cell_voltage, led_vmin, led_vmax, led_vstep, num_images=1, savepath='.', sm_channel='b'):
@@ -184,6 +188,7 @@ def cam1sm3ps2(cam,sm, ps, cell_voltage, led_vmin, led_vmax, led_vstep, num_imag
 
     ps.off()
     sm_data = sm.loop_measure(end=True)
+    take_bg(cam, savepath+'\\camera',start=10)
 
     return sm_data, ps_data
 
@@ -197,6 +202,7 @@ def cam1sm4ps0(cam,sm, cell_current, num_images=1, savepath='.', sm_channel='b')
         cam.snap(savepath+'\\camera\\'+"I="+str(cell_current)+"_LED=0_"+str(i))
     cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
+    take_bg(cam, savepath+'\\camera',start=10)
     return sm_data
 
 def cam1sm4ps1(cam,sm, ps, cell_current, led_v, num_images=1, savepath='.', sm_channel='b'):
@@ -213,6 +219,7 @@ def cam1sm4ps1(cam,sm, ps, cell_current, led_v, num_images=1, savepath='.', sm_c
     sm_data = sm.measure(sm_channel)
     ps_data = led_v
     ps.off()
+    take_bg(cam, savepath+'\\camera',start=10)
     return sm_data, ps_data
 
 def cam1sm4ps2(cam,sm, ps, cell_current, led_vmin, led_vmax, led_vstep, num_images=1, savepath='.', sm_channel='b'):
@@ -234,6 +241,7 @@ def cam1sm4ps2(cam,sm, ps, cell_current, led_vmin, led_vmax, led_vstep, num_imag
     cam.dump_settings(savepath+'\\camera')
 
     ps.off()
+    take_bg(cam, savepath+'\\camera',start=10)
     sm_data = sm.loop_measure(end=True)
 
     return sm_data, ps_data
@@ -249,6 +257,7 @@ def cam1sm5ps0(cam,sm, cell_vmin, cell_vmax, cell_vstep, num_images=1, savepath=
         sm.loop_measure(sm_channel)
     cam.dump_settings(savepath+'\\camera')
     sm_data = sm.loop_measure(end=True)
+    take_bg(cam, savepath+'\\camera',start=10)
     return sm_data
 
 def cam1sm5ps1(cam,sm, ps, cell_vmin, cell_vmax, cell_vstep, led_v, num_images=1, savepath='.', sm_channel='b'):
@@ -267,6 +276,7 @@ def cam1sm5ps1(cam,sm, ps, cell_vmin, cell_vmax, cell_vstep, led_v, num_images=1
     sm_data = sm.loop_measure(end=True)
     ps_data = led_v
     ps.off()
+    take_bg(cam, savepath+'\\camera',start=10)
     return sm_data, ps_data
 
 def cam1sm5ps2(*args):
