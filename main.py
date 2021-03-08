@@ -8,14 +8,14 @@ import csv
 
 #######################################
 # EDIT HERE: 
-savepath = r"C:\Users\akashdasgupta\Desktop\Peoples_test_samples\mellissa\0038D4\white(for_3_changed_apperture)"
-mux_index = 1
+savepath = r"C:\Users\akashdasgupta\Desktop\Peoples_test_samples\mellissa\Actual data\white"
+mux_index = 2
 
 # Camera:
-cam_exposure_time = 0.001 # s
-cam_shutter_mode = 0 # 0 = rolling, 1 = global
+cam_exposure_time = 0.1 # s
+cam_shutter_mode = 1 # 0 = rolling, 1 = global
 cam_bit_depth = 2 # 0 = 12-bit (high well capacity), 1 = 12-bit (low noise), 16-bit (low noise & high well capacity)
-num_images = 20 # How many repeats to take
+num_images = 10 # How many repeats to take
 
 # Source meter:
 sm_channel = 'b' # a or b
@@ -27,11 +27,11 @@ sm_vmax = 1.1
 sm_vstep = 0.01
 
 # LED Power supply:
-ps_voltage = 2.55 # V, for single voltage
+ps_voltage = 2.5 # V, for single voltage
 #for sweep
 ps_vmin = 2.7
-ps_vmax = 2.55
-ps_vstep = -0.002
+ps_vmax = 2.5
+ps_vstep = -0.005
 
 #######################################
 
@@ -42,7 +42,7 @@ Mux = ArdunioMux()
 Cam = Zyla(cam_exposure_time,cam_bit_depth,cam_shutter_mode)
 
 def exposure_maker(nominal_v):
-    if 2.55 <= nominal_v <= 2.6:
+    if 2.5 <= nominal_v <= 2.6:
         return 10
     elif 2.6 < nominal_v <=2.62:
         return 8
@@ -74,9 +74,9 @@ LOOPS AVALIABLE:
 Mux.switch_pix(mux_index)
 
 print("Taking readings .....")
-# exposure_list = [exposure_maker(i) for i in np.arange( ps_vmin, ps_vmax+ps_vstep, ps_vstep)]
+exposure_list = [exposure_maker(i) for i in np.arange( ps_vmin, ps_vmax+ps_vstep, ps_vstep)]
 # sm_data, ps_data = cam1sm2ps2(Cam, Sm, Ps, ps_vmin, ps_vmax, 
-#                              ps_vstep,num_images=1, 
+#                              ps_vstep,num_images, 
 #                              savepath=savepath,sm_channel='b', exposure_list=exposure_list)
 
 m_data, ps_data = cam1sm2ps1(Cam, Sm, Ps, ps_voltage,num_images, 
