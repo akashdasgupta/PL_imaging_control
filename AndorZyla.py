@@ -9,17 +9,20 @@ class Zyla():
     def __init__(self, exposure_time, bit_depth_mode, shutter_mode):
         print("Attempting to connect to ANDOR Zyla...")
         try:
-            self.cam = Andor.AndorSDK3Camera()
+            # Opens Camera:
+            self.cam = Andor.AndorSDK3Camera() 
             # We probably don't want any weird noise filtering:
             self.cam.set_value("SpuriousNoiseFilter", False)
+            # Settings:
             self.cam.set_exposure(exposure_time)
             self.cam.set_value("ElectronicShutteringMode", shutter_mode)
             self.cam.set_value("SimplePreAmpGainControl",bit_depth_mode) 
 
+            # Wait till camera is cooled upon inti:
             print("Done!\nCamera is cooling, please wait...")
             self.cam.set_cooler(True)
             while True:
-                if float(self.cam.get_temperature()) <=1:
+                if float(self.cam.get_temperature()) <=1: # To 0 deg
                     break
             print("Cooled to 0 deg C")
 
@@ -36,11 +39,12 @@ class Zyla():
             self.cam.set_value("SimplePreAmpGainControl",bit_depth_mode) 
             # 0 = 12-bit (high well capacity), 1 = 12-bit (low noise), 16-bit (low noise & high well capacity)
     def snap(self, filename):
-        image = self.cam.snap()
+        image = self.cam.snap() # Saves image to memory
+        # Write to disk:
         imageio.imwrite(filename+".tif", image) # tif is the only thing that works!
     def dump_settings(self, path):
         with open(path + "\\" + "camera_setting_dump.txt",'w') as file:
-            print(self.cam.get_all_values(), file=file)
+            print(self.cam.get_all_values(), file=file) # Saves all parameters to file
     def close(self):
         self.cam.close()
 

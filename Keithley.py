@@ -19,7 +19,9 @@ class Keithley():
     def __init__(self):
             print("Attempting to connect to the  Keithley sourcemeter...")
             try:
+                # Opens device:
                 self.sm = Keithley2600(keithly_string, raise_keithley_errors=True, visa_library=r'C:\Windows\System32\visa64.dll')
+                # Reset both channels for consistancy:
                 self.sm.smua.reset()
                 self.sm.smub.reset()
                 print("Done!")
@@ -30,6 +32,9 @@ class Keithley():
             self.currents = []
 
     def measure(self, channel='b'):
+        """
+        Single measurement: just returns voltage and current measured at a channel
+        """
         if channel.lower() == 'a':
             v = self.sm.smua.measure.v()
             i = self.sm.smua.measure.i()
@@ -38,13 +43,13 @@ class Keithley():
             v = self.sm.smub.measure.v()
             i = self.sm.smub.measure.i()
             return v,i
-        else:
+        else: # Default is b 
             print("The provided channel:", channel,"was invalid. Defaulting to b...")
             v = self.sm.smub.measure.v()
             i = self.sm.smub.measure.i()
             return v,i
     
-    def set_voltage_level(self, level, channel='b'):
+    def set_voltage_level(self, level, channel='b'):  
         if channel.lower() == 'a':
             self.sm.smua.reset()
             self.sm.smua.source.output = self.sm.smua.OUTPUT_ON
