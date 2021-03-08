@@ -74,9 +74,9 @@ def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, exposure
     ps.on()
 
     ps_data = []
-    for nominal_v in np.arange(led_vmin,led_vmax+led_vstep, led_vstep):
+    for k, nominal_v in enumerate(np.arange(led_vmin,led_vmax+led_vstep, led_vstep)):
         ps.set_voltage(nominal_v)
-        cam.SetParams(exposure=exposure_list[i])
+        cam.SetParams(exposure=exposure_list[k])
         time.sleep(3)
         for i in range(num_images):
             cam.snap(savepath+'\\camera\\'+"SC_LED="+"{:.3f}".format(nominal_v)+"_"+str(i))
@@ -441,4 +441,3 @@ def cam0sm5ps1(sm, ps, cell_vmin, cell_vmax, cell_vstep, led_v, num_images=1, sa
 
 def cam0sm5ps2(*args):
     print("ACTION NOT COMPLETE: Sweeping both the keithley and LED at the same time is currently unsupported!")
-
