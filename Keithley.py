@@ -101,6 +101,19 @@ class Keithley():
             v,i = self.measure(channel)
             self.voltages.append(v)
             self.currents.append(i)
+    
+    def off(self, channel='b'):
+        if channel.lower() == 'a':
+            self.sm.smua.reset()
+            self.sm.smua.source.output = self.sm.smua.OUTPUT_OFF
+        elif channel.lower() == 'b':
+            self.sm.smub.reset()
+            self.sm.smub.source.output = self.sm.smub.OUTPUT_OFF
+        else:
+            print("The provided channel:", channel,"was invalid. Defaulting to b...")
+            self.sm.smub.reset()
+            self.sm.smub.source.output = self.sm.smub.OUTPUT_OFF
+
 
 
 
