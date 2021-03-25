@@ -83,6 +83,10 @@ def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, exposure
         sm.loop_measure(sm_channel)
         ps_data.append(nominal_v)
     cam.dump_settings(savepath+'\\camera')
+    with open(savepath+'\\camera\\exposure_list.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        for row in zip(np.arange(led_vmin,led_vmax+led_vstep, led_vstep), exposure_list):
+            writer.writerow(row)
     ps.off()
     take_bg(cam, savepath+'\\camera',start=10)
     sm_data = sm.loop_measure(end=True)
