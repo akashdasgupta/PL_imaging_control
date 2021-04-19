@@ -169,6 +169,7 @@ def cam1sm3ps0(cam,sm, cell_voltage, num_images=1, savepath='.', sm_channel='b')
         cam.snap(savepath+'\\camera\\'+"V="+str(cell_voltage)+"_LED=0_"+str(i))
     cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
+    sm.off(sm_channel)
     take_bg(cam, savepath+'\\camera',start=10)
     return sm_data
 
@@ -223,6 +224,7 @@ def cam1sm4ps0(cam,sm, cell_current, num_images=1, savepath='.', sm_channel='b')
         cam.snap(savepath+'\\camera\\'+"I="+str(cell_current)+"_LED=0_"+str(i))
     cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
+    sm.off()
     take_bg(cam, savepath+'\\camera',start=10)
     return sm_data
 
@@ -278,6 +280,7 @@ def cam1sm5ps0(cam,sm, cell_vmin, cell_vmax, cell_vstep, num_images=1, savepath=
         sm.loop_measure(sm_channel)
     cam.dump_settings(savepath+'\\camera')
     sm_data = sm.loop_measure(end=True)
+    sm.off(sm_channel)
     take_bg(cam, savepath+'\\camera',start=10)
     return sm_data
 
