@@ -8,11 +8,11 @@ import csv
 
 #######################################
 # EDIT HERE: 
-savepath = r"C:\Users\akashdasgupta\Desktop\Real_stuff\white"
+savepath = r"C:\SCRATCH\EL_paper\1.5eV\20_4_2021\white"
 mux_index = 4
 
 # Camera:
-cam_exposure_time = 0.01 # s
+cam_exposure_time = 0.02 # s
 cam_shutter_mode = 0 # 0 = rolling, 1 = global
 cam_bit_depth = 2 # 0 = 12-bit (high well capacity), 1 = 12-bit (low noise), 16-bit (low noise & high well capacity)
 num_images = 20 # How many repeats to take
@@ -27,13 +27,16 @@ sm_vmax = 1.1
 sm_vstep = 0.01
 
 # LED Power supply:
-ps_voltage = 2.5 # V, for single voltage
+ps_voltage = 2.50 # V, for single voltage
 #for sweep
 ps_vmin = 2.54
 ps_vmax = 2.55
 ps_vstep = -0.005
 
 #######################################
+
+if not os.path.isdir(savepath):
+    os.makedirs(savepath)
 
 # Open Device :
 Ps = MulticompPro()
@@ -69,52 +72,11 @@ print("Taking readings .....")
 
 #####################################################################
 
-# exposure_list = [exposure_maker(i) for i in np.arange( ps_vmin, ps_vmax+ps_vstep, ps_vstep)]
+### YOUR LOOP GOES HERE ####
 
+### REMEMBER TO SAVE ANY EEXT DATA HERE ###
 
-# sm_data, ps_data = cam1sm2ps2(Cam, Sm, Ps, ps_vmin, ps_vmax, 
-#                              ps_vstep,num_images, 
-#                              savepath=f"{savepath}\\oc",sm_channel='b', exposure_list=exposure_list)
-
-# # m_data, ps_data = cam1sm2ps1(Cam, Sm, Ps, ps_voltage,num_images, 
-# #                              savepath=savepath,sm_channel='b')
-
-# print("Done!\nSaving datafiles ....")
-
-# with open(f"{savepath}\\oc\\source_meter.csv", 'w', newline='') as file:
-#     writer = csv.writer(file)
-#     for row in zip(sm_data[0], sm_data[1]):
-#         writer.writerow(row)
-
-# with open(f"{savepath}\\oc\\LED_power_supply.csv", 'w', newline='') as file:
-#     writer = csv.writer(file)
-#     for row in ps_data:
-#         writer.writerow(["{:.3f}".format(float(row))])
-
-
-
-# exposure_list = [exposure_maker(i) for i in np.arange( ps_vmin, ps_vmax+ps_vstep, ps_vstep)]
-
-
-# sm_data, ps_data = cam1sm1ps2(Cam, Sm, Ps, ps_vmin, ps_vmax, 
-#                              ps_vstep,num_images, 
-#                              savepath=f"{savepath}\\sc",sm_channel='b', exposure_list=exposure_list)
-
-m_data, ps_data = cam1sm2ps1(Cam, Sm, Ps, ps_voltage,num_images, 
-                             savepath=savepath,sm_channel='b')
-
-print("Done!\nSaving datafiles ....")
-
-# with open(f"{savepath}\\sc\\source_meter.csv", 'w', newline='') as file:
-#     writer = csv.writer(file)
-#     for row in zip(sm_data[0], sm_data[1]):
-#         writer.writerow(row)
-
-# with open(f"{savepath}\\sc\\LED_power_supply.csv", 'w', newline='') as file:
-#     writer = csv.writer(file)
-#     for row in ps_data:
-#         writer.writerow(["{:.3f}".format(float(row))])
-
+###################################################################
 
 print("Done!\nClosing devices...")
 
