@@ -39,14 +39,14 @@ def cam1sm1ps0(cam,sm, num_images=1, savepath='.', sm_channel='b'):
     take_bg(cam, savepath+'\\camera',start=10)
     return sm_data
 
-def cam1sm1ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
+def cam1sm1ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b', timewait=3):
     """imaging, short circuit, light_set at some specified value"""
     make_cam_path(savepath)
     take_bg(cam, savepath+'\\camera')
     sm.set_sc(sm_channel)
     ps.set_voltage(led_v)
     ps.on()
-    time.sleep(3)
+    time.sleep(timewait)
     for i in range(num_images):
         cam.snap(savepath+'\\camera\\'+"SC_LED="+str(led_v)+"_"+str(i))
     cam.dump_settings(savepath+'\\camera')
@@ -56,7 +56,7 @@ def cam1sm1ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
     take_bg(cam, savepath+'\\camera',start=10)
     return sm_data, ps_data
 
-def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, exposure_list = None, savepath='.', sm_channel='b'):
+def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, exposure_list = None, savepath='.', sm_channel='b',led_constant=0, constant_time=None):
     """imaging, short circuit, light sweeping intensity"""
     if not exposure_list:
         exposure_list = 0.1
@@ -71,6 +71,10 @@ def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, exposure
     take_bg(cam, savepath+"\\camera")
     sm.set_sc(sm_channel)
     ps.set_voltage(0)
+    if constant_time:
+        ps.set_voltage(led_constant)
+        ps.on()
+        time.sleep(constant_time)
     ps.on()
 
     ps_data = []
@@ -105,14 +109,14 @@ def cam1sm2ps0(cam,sm, num_images=1, savepath='.', sm_channel='b'):
     take_bg(cam, savepath+'\\camera',start=10)
     return sm_data
 
-def cam1sm2ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
+def cam1sm2ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b', timewait=3):
     """imaging, open circuit, light_set at some specified value"""
     make_cam_path(savepath)
     take_bg(cam, savepath+'\\camera')
     sm.set_oc(sm_channel)
     ps.on()
     ps.set_voltage(led_v)
-    time.sleep(3)
+    time.sleep(timewait)
     for i in range(num_images):
         cam.snap(savepath+'\\camera\\'+"OC_LED="+str(led_v)+"_"+str(i))
     cam.dump_settings(savepath+'\\camera')
@@ -122,7 +126,7 @@ def cam1sm2ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b'):
     take_bg(cam, savepath+'\\camera',start=10)
     return sm_data, ps_data
 
-def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, exposure_list = None, savepath='.', sm_channel='b'):
+def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, exposure_list = None, savepath='.', sm_channel='b', led_constant=0, constant_time=None):
     """imaging, open circuit, light sweeping intensity"""
     if not exposure_list:
         exposure_list = 0.1
@@ -137,6 +141,10 @@ def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, exposur
     take_bg(cam, savepath+'\\camera')
     sm.set_oc(sm_channel)
     ps.set_voltage(0)
+    if constant_time:
+        ps.set_voltage(led_constant)
+        ps.on()
+        time.sleep(constant_time)
     ps.on()
 
     ps_data = []
