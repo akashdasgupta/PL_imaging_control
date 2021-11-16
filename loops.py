@@ -469,4 +469,20 @@ def cam0sm5ps2(*args):
     print("ACTION NOT COMPLETE: Sweeping both the keithley and LED at the same time is currently unsupported!")
 
 
-
+def manuele(cam, ps, led_v, num_images=1, savepath='.', sm_channel='b', timewait=3):
+    """imaging, short circuit, light_set at some specified value"""
+    make_cam_path(savepath)
+    take_bg(cam, savepath+'\\camera')
+    ps.set_voltage(led_v)
+    start_time = time.time()
+    times = []
+    ps.on()
+    for i in range(num_images):
+        cam.snap(savepath+'\\camera\\'+"TRANSFILM_LED="+str(led_v)+"_"+str(i))
+        times.append(time.time()-start_time)
+        time.sleep(timewait)
+    cam.dump_settings(savepath+'\\camera')
+    ps_data = led_v
+    ps.off()
+    take_bg(cam, savepath+'\\camera',start=10)
+    return times, ps_data
