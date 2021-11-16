@@ -34,9 +34,11 @@ def cam1sm1ps0(cam,sm, num_images=1, savepath='.', sm_channel='b'):
     sm.set_sc(sm_channel)
     for i in range(num_images):
         cam.snap(savepath+'\\camera\\'+"SC_LED=0_"+str(i))
+    sm.off()
     cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
     take_bg(cam, savepath+'\\camera',start=10)
+    
     return sm_data
 
 def cam1sm1ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b', timewait=3):
@@ -52,6 +54,7 @@ def cam1sm1ps1(cam,sm, ps, led_v, num_images=1, savepath='.', sm_channel='b', ti
     cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
     ps_data = led_v
+    sm.off()
     ps.off()
     take_bg(cam, savepath+'\\camera',start=10)
     return sm_data, ps_data
@@ -69,31 +72,32 @@ def cam1sm1ps2(cam,sm, ps, led_vmin, led_vmax, led_vstep, num_images=1, exposure
 
     make_cam_path(savepath)
     take_bg(cam, savepath+"\\camera")
-    sm.set_sc(sm_channel)
-    ps.set_voltage(0)
-    if constant_time:
-        ps.set_voltage(led_constant)
-        ps.on()
-        time.sleep(constant_time)
-    ps.on()
-
+    
     ps_data = []
     for k, nominal_v in enumerate(np.arange(led_vmin,led_vmax+led_vstep, led_vstep)):
         ps.set_voltage(nominal_v)
+        ps.on()
+        sm.set_sc(sm_channel)
         cam.SetParams(exposure=exposure_list[k])
-        time.sleep(3)
+        time.sleep(constant_time)
         for i in range(num_images):
             cam.snap(savepath+'\\camera\\'+"SC_LED="+"{:.3f}".format(nominal_v)+"_"+str(i))
         sm.loop_measure(sm_channel)
         ps_data.append(nominal_v)
+        sm.off(sm_channel)
+        ps.off()
+        time.sleep(constant_time)
+
     cam.dump_settings(savepath+'\\camera')
     with open(savepath+'\\camera\\exposure_list.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         for row in zip(np.arange(led_vmin,led_vmax+led_vstep, led_vstep), exposure_list):
             writer.writerow(row)
+    sm.off(sm_channel)
     ps.off()
     take_bg(cam, savepath+'\\camera',start=10)
     sm_data = sm.loop_measure(end=True)
+
 
     return sm_data, ps_data
 
@@ -139,23 +143,22 @@ def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, exposur
 
     make_cam_path(savepath)
     take_bg(cam, savepath+'\\camera')
-    sm.set_oc(sm_channel)
-    ps.set_voltage(0)
-    if constant_time:
-        ps.set_voltage(led_constant)
-        ps.on()
-        time.sleep(constant_time)
-    ps.on()
 
     ps_data = []
     for i, nominal_v in enumerate(np.arange(led_vmin,led_vmax+led_vstep, led_vstep)):
         ps.set_voltage(nominal_v)
+        ps.on()
+        sm.set_oc(sm_channel)
         cam.SetParams(exposure=exposure_list[i])
-        time.sleep(3)
+        time.sleep(constant_time)
         for i in range(num_images):
             cam.snap(savepath+'\\camera\\'+"OC_LED="+"{:.3f}".format(nominal_v)+"_"+str(i))
         sm.loop_measure(sm_channel)
         ps_data.append(nominal_v)
+        sm.off(sm_channel)
+        ps.off()
+        time.sleep(constant_time)
+        
     cam.dump_settings(savepath+'\\camera')
     with open(savepath+'\\camera\\exposure_list.csv', 'w', newline='') as file:
         writer = csv.writer(file)
@@ -164,6 +167,7 @@ def cam1sm2ps2(cam,sm, ps,  led_vmin, led_vmax, led_vstep, num_images=1, exposur
     ps.off()
     take_bg(cam, savepath+'\\camera',start=10)
     sm_data = sm.loop_measure(end=True)
+    sm.off(sm_channel)
 
     return sm_data, ps_data
 
@@ -181,20 +185,21 @@ def cam1sm3ps0(cam,sm, cell_voltage, num_images=1, savepath='.', sm_channel='b')
     take_bg(cam, savepath+'\\camera',start=10)
     return sm_data
 
-def cam1sm3ps1(cam,sm, ps, cell_voltage, led_v, num_images=1, savepath='.', sm_channel='b'):
+def cam1sm3ps1(cam,sm, ps, cell_voltage, led_v, num_images=1, savepath='.', sm_channel='b', timewait=3):
     """imaging, set voltage, light_set at some specified value"""
     make_cam_path(savepath)
     take_bg(cam, savepath+'\\camera')
     sm.set_voltage_level(cell_voltage, sm_channel)
     ps.set_voltage(led_v)
     ps.on()
-    time.sleep(3)
+    time.sleep(timewait)
     for i in range(num_images):
         cam.snap(savepath+'\\camera\\'+"V="+str(cell_voltage)+"_LED="+str(led_v)+"_"+str(i))
     cam.dump_settings(savepath+'\\camera')
     sm_data = sm.measure(sm_channel)
     ps_data = led_v
     ps.off()
+    sm.off(sm_channel)
     take_bg(cam, savepath+'\\camera',start=10)
     return sm_data, ps_data
 
@@ -292,19 +297,23 @@ def cam1sm5ps0(cam,sm, cell_vmin, cell_vmax, cell_vstep, num_images=1, savepath=
     take_bg(cam, savepath+'\\camera',start=10)
     return sm_data
 
-def cam1sm5ps1(cam,sm, ps, cell_vmin, cell_vmax, cell_vstep, led_v, num_images=1, savepath='.', sm_channel='b'):
+def cam1sm5ps1(cam,sm, ps, cell_Vs, led_v, num_images=1, savepath='.', sm_channel='b', timewait=3):
     """imaging, set current level, light_set at some specified value"""
     make_cam_path(savepath)
     take_bg(cam, savepath+'\\camera')
     ps.set_voltage(led_v)
-    time.sleep(3)
-    ps.on()
-    for cell_voltage in np.arange(cell_vmin, cell_vmax+cell_vstep, cell_vstep):
+    #time.sleep(timewait)
+    for cell_voltage in cell_Vs:
+        ps.on()
         sm.set_voltage_level(cell_voltage, sm_channel)
+        time.sleep(timewait)
         for i in range(num_images):
             cam.snap(savepath+'\\camera\\'+"V="+"{:.3f}".format(cell_voltage)+"_LED="+str(led_v)+"_"+str(i))
             #"{:.3f}".format(nominal_v)
         sm.loop_measure(sm_channel)
+        sm.off(sm_channel)
+        ps.off()
+        time.sleep(timewait)
     cam.dump_settings(savepath+'\\camera')
     sm.off(sm_channel)
     sm_data = sm.loop_measure(end=True)
@@ -458,3 +467,6 @@ def cam0sm5ps1(sm, ps, cell_vmin, cell_vmax, cell_vstep, led_v, num_images=1, sa
 
 def cam0sm5ps2(*args):
     print("ACTION NOT COMPLETE: Sweeping both the keithley and LED at the same time is currently unsupported!")
+
+
+
