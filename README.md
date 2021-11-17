@@ -3,7 +3,7 @@
 
 *Developer: Akash Dasgupta*
 
-*Scientific contriburers: Suhas Mahesh,Pietro Caprioglio, Yen-Hung Lin, Karl-Augustin Zaininger, Robert D.J. Oliver, Philippe Holzhey, Suer Zhou, Melissa M. McCarthy, Joel A. Smith, Maximilian Frenzel, M. Greyson Christoforo, James M. Ball, Bernard Wenger and Henry J. Snaith*
+*Scientific contributors : Suhas Mahesh,Pietro Caprioglio, Yen-Hung Lin, Karl-Augustin Zaininger, Robert D.J. Oliver, Philippe Holzhey, Suer Zhou, Melissa M. McCarthy, Joel A. Smith, Maximilian Frenzel, M. Greyson Christoforo, James M. Ball, Bernard Wenger and Henry J. Snaith*
 
 * If you use this code, please cite our paper in your publication: [DOI WHEN AVALIABLE]
 * For data analysis using script: [LINK WHEN AVALIABLE]
