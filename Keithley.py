@@ -36,15 +36,21 @@ class Keithley():
         Single measurement: just returns voltage and current measured at a channel
         """
         if channel.lower() == 'a':
+            self.sm.smua.reset()
+            sm.smua.sense = sm.smua.SENSE_REMOTE
             v = self.sm.smua.measure.v()
             i = self.sm.smua.measure.i()
             return v,i
         elif channel.lower() == 'b':
+            self.sm.smub.reset()
+            sm.smub.sense = sm.smub.SENSE_REMOTE
             v = self.sm.smub.measure.v()
             i = self.sm.smub.measure.i()
             return v,i
         else: # Default is b 
             print("The provided channel:", channel,"was invalid. Defaulting to b...")
+            self.sm.smub.reset()
+            sm.smub.sense = sm.smub.SENSE_REMOTE
             v = self.sm.smub.measure.v()
             i = self.sm.smub.measure.i()
             return v,i
@@ -52,17 +58,20 @@ class Keithley():
     def set_voltage_level(self, level, channel='b'):  
         if channel.lower() == 'a':
             self.sm.smua.reset()
+            sm.smua.sense = sm.smua.SENSE_REMOTE
             self.sm.smua.source.output = self.sm.smua.OUTPUT_ON
             self.sm.smua.source.func = self.sm.smua.OUTPUT_DCVOLTS
             self.sm.smua.source.levelv = level 
         elif channel.lower() == 'b':
             self.sm.smub.reset()
+            sm.smub.sense = sm.smub.SENSE_REMOTE
             self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
             self.sm.smub.source.func = self.sm.smub.OUTPUT_DCVOLTS
             self.sm.smub.source.levelv = level 
         else:
             print("The provided channel:", channel,"was invalid. Defaulting to b...")
             self.sm.smub.reset()
+            sm.smub.sense = sm.smub.SENSE_REMOTE
             self.sm.smub.source.output = self.sm.OUTPUT_ON
             self.sm.smub.source.func = self.sm.OUTPUT_DCVOLTS
             self.sm.smub.source.levelv = level      
@@ -70,24 +79,44 @@ class Keithley():
     def set_current_level(self, level, channel='b'):
         if channel.lower() == 'a':
             self.sm.smua.reset()
+            sm.smua.sense = sm.smua.SENSE_REMOTE
             self.sm.smua.source.output = self.sm.smua.OUTPUT_ON
             self.sm.smua.source.func = self.sm.smua.OUTPUT_DCAMPS
             self.sm.smua.source.leveli = level 
         elif channel.lower() == 'b':
             self.sm.smub.reset()
+            sm.smub.sense = sm.smub.SENSE_REMOTE
             self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
             self.sm.smub.source.func = self.sm.smub.OUTPUT_DCAMPS
             self.sm.smub.source.leveli = level 
         else:
             print("The provided channel:", channel,"was invalid. Defaulting to b...")
             self.sm.smub.reset()
+            sm.smub.sense = sm.smub.SENSE_REMOTE
             self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
             self.sm.smub.source.func = self.sm.smub.OUTPUT_DCAMPS
             self.sm.smub.source.leveli = level    
 
     def set_sc(self, channel='b'):
+        if channel.lower() == 'a':
+            self.sm.smua.reset()
+            sm.smua.sense = sm.smua.SENSE_REMOTE
+        elif channel.lower() == 'b':
+            self.sm.smub.reset()
+            sm.smub.sense = sm.smub.SENSE_REMOTE
+        
         self.set_voltage_level(0,channel)
+
+
+        
     def set_oc(self, channel='b'):
+        if channel.lower() == 'a':
+            self.sm.smua.reset()
+            sm.smua.sense = sm.smua.SENSE_REMOTE
+        elif channel.lower() == 'b':
+            self.sm.smub.reset()
+            sm.smub.sense = sm.smub.SENSE_REMOTE
+        
         self.set_current_level(0,channel)
     
     def loop_measure(self, channel='b', end=False):
