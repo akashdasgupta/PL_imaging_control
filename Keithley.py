@@ -1,9 +1,6 @@
 from keithley2600 import Keithley2600
 
-class Keithley():
-    voltages = []
-    currents = []
-    
+class Keithley():   
     def __init__(self, keithly_string):
             print("Attempting to connect to the  Keithley sourcemeter...")
             try:
@@ -28,12 +25,7 @@ class Keithley():
             v = self.sm.smub.measure.v()
             i = self.sm.smub.measure.i()
             return v,i
-        else: # Default is b 
-            print("The provided channel:", channel,"was invalid. Defaulting to b...")
-            v = self.sm.smub.measure.v()
-            i = self.sm.smub.measure.i()
-            return v,i
-    
+
     def set_voltage_level(self, level, channel='b'):  
         if channel.lower() == 'a':
             self.sm.smua.reset()
@@ -47,13 +39,7 @@ class Keithley():
             self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
             self.sm.smub.source.func = self.sm.smub.OUTPUT_DCVOLTS
             self.sm.smub.source.levelv = level 
-        else:
-            print("The provided channel:", channel,"was invalid. Defaulting to b...")
-            self.sm.smub.reset()
-            self.sm.smub.sense = self.sm.smub.SENSE_REMOTE
-            self.sm.smub.source.output = self.sm.OUTPUT_ON
-            self.sm.smub.source.func = self.sm.OUTPUT_DCVOLTS
-            self.sm.smub.source.levelv = level      
+
 
     def set_current_level(self, level, channel='b'):
         if channel.lower() == 'a':
@@ -68,13 +54,6 @@ class Keithley():
             self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
             self.sm.smub.source.func = self.sm.smub.OUTPUT_DCAMPS
             self.sm.smub.source.leveli = level 
-        else:
-            print("The provided channel:", channel,"was invalid. Defaulting to b...")
-            self.sm.smub.reset()
-            self.sm.smub.sense = self.sm.smub.SENSE_REMOTE
-            self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
-            self.sm.smub.source.func = self.sm.smub.OUTPUT_DCAMPS
-            self.sm.smub.source.leveli = level    
 
     def set_sc(self, channel='b'):
         if channel.lower() == 'a':
@@ -96,26 +75,10 @@ class Keithley():
         
         self.set_current_level(0,channel)
     
-    def loop_measure(self, channel='b', end=False):
-        if end:
-            vs = self.voltages
-            Is = self.currents
-            self.voltages = []
-            self.currents = []
-            return vs, Is
-        else:
-            v,i = self.measure(channel)
-            self.voltages.append(v)
-            self.currents.append(i)
-    
     def off(self, channel='b'):
         if channel.lower() == 'a':
             self.sm.smua.reset()
             self.sm.smua.source.output = self.sm.smua.OUTPUT_OFF
         elif channel.lower() == 'b':
-            self.sm.smub.reset()
-            self.sm.smub.source.output = self.sm.smub.OUTPUT_OFF
-        else:
-            print("The provided channel:", channel,"was invalid. Defaulting to b...")
             self.sm.smub.reset()
             self.sm.smub.source.output = self.sm.smub.OUTPUT_OFF
