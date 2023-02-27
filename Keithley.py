@@ -54,26 +54,6 @@ class Keithley():
             self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
             self.sm.smub.source.func = self.sm.smub.OUTPUT_DCAMPS
             self.sm.smub.source.leveli = level 
-
-    def set_sc(self, channel='b'):
-        if channel.lower() == 'a':
-            self.sm.smua.reset()
-            self.sm.smua.sense = self.sm.smua.SENSE_REMOTE
-        elif channel.lower() == 'b':
-            self.sm.smub.reset()
-            self.sm.smub.sense = self.sm.smub.SENSE_REMOTE
-        
-        self.set_voltage_level(0,channel)
-        
-    def set_oc(self, channel='b'):
-        if channel.lower() == 'a':
-            self.sm.smua.reset()
-            self.sm.smua.sense = self.sm.smua.SENSE_REMOTE
-        elif channel.lower() == 'b':
-            self.sm.smub.reset()
-            self.sm.smub.sense = self.sm.smub.SENSE_REMOTE
-        
-        self.set_current_level(0,channel)
     
     def off(self, channel='b'):
         if channel.lower() == 'a':
