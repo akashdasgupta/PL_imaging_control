@@ -2,7 +2,7 @@
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-from pylablib.aux_libs.devices import Andor
+from pylablib.legacy.aux_libs.devices import Andor
 import imageio
 
 class Zyla():
