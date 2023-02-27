@@ -8,7 +8,6 @@ class AugMux():
             self.mux.Terminator = ''
             print("Done!")
         except:
-
             raise IOError('Could not initilise the Ardunio multiplexer! (may blame Aug...)')
     
     def switch_pix(self, index):

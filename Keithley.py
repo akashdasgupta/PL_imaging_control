@@ -1,35 +1,20 @@
-import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-
-import pyvisa as visa
 from keithley2600 import Keithley2600
 
-# We will check if resource manager is open, opens if not, and extracts Keithly resource string:
-try:
-    rm.list_resources()
-except NameError:
-    rm = visa.ResourceManager(r'C:\Windows\System32\visa64.dll')
-    resources = rm.list_resources()
-for resource in resources:
-    if resource.startswith("GPIB0"): 
-        keithly_string = resource
-
-
 class Keithley():
-    def __init__(self):
+    voltages = []
+    currents = []
+    
+    def __init__(self, keithly_string):
             print("Attempting to connect to the  Keithley sourcemeter...")
             try:
                 # Opens device:
-                self.sm = Keithley2600(keithly_string, raise_keithley_errors=True, visa_library=r'C:\Windows\System32\visa64.dll')
+                self.sm = Keithley2600(keithly_string, raise_keithley_errors=True)
                 # Reset both channels for consistancy:
                 self.sm.smua.reset()
                 self.sm.smub.reset()
                 print("Done!")
             except:
-                self.sm = None
-                print('Could not initilise Keithley sourcemeter! ID given:', keithly_string)
-            self.voltages = []
-            self.currents = []
+                raise IOError('Could not initilise Keithley sourcemeter!')
 
     def measure(self, channel='b'):
         """

@@ -1,7 +1,3 @@
-# Stops people from freaking out, but also, plz dont conda update!!:
-import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-
 from pylablib.legacy.aux_libs.devices import Andor
 import imageio
 
@@ -27,8 +23,8 @@ class Zyla():
             print("Cooled to 0 deg C")
 
         except:
-            print("Couldn't initilise ANDOR Zyla!")
-            self.cam = None
+            raise IOError("Couldn't initilise ANDOR Zyla!")
+
     def SetParams(self, exposure=None, shutter_mode=None, bit_depth_mode=None):
         if exposure:
             self.cam.set_exposure(exposure) # in s
@@ -38,13 +34,16 @@ class Zyla():
         if bit_depth_mode:
             self.cam.set_value("SimplePreAmpGainControl",bit_depth_mode) 
             # 0 = 12-bit (high well capacity), 1 = 12-bit (low noise), 16-bit (low noise & high well capacity)
+    
     def snap(self, filename):
         image = self.cam.snap() # Saves image to memory
         # Write to disk:
         imageio.imwrite(filename+".tif", image) # tif is the only thing that works!
+    
     def dump_settings(self, path):
         with open(path + "\\" + "camera_setting_dump.txt",'w') as file:
             print(self.cam.get_all_values(), file=file) # Saves all parameters to file
+    
     def close(self):
         self.cam.close()
 
