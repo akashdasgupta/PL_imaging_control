@@ -134,9 +134,3 @@ class Keithley():
             print("The provided channel:", channel,"was invalid. Defaulting to b...")
             self.sm.smub.reset()
             self.sm.smub.source.output = self.sm.smub.OUTPUT_OFF
-
-
-
-
-
-

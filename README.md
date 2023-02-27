@@ -1,5 +1,5 @@
 # PL imaging control scripts
-*Control script for acquiring data using PL imaging setup, publication DOI: [WHEN AVALIABLE]*
+*Control script for acquiring data using PL imaging setup, publication DOI: https://doi.org/10.1021/acsenergylett.2c01094
 
 *Developer: Akash Dasgupta*
 
