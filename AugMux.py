@@ -1,19 +1,15 @@
 import serial
-# Stops people from freaking out, but also, plz dont conda update!!:
-import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-
 
 class AugMux():
-    def __init__(self):
+    def __init__(self, COM_port_string):
         try:
             print("Attempting to connect to the Ardunio multiplexer...")
-            self.mux = serial.Serial("COM7") # Ardunios usually live in com4
+            self.mux = serial.Serial(COM_port_string) # Ardunios usually live in com4
             self.mux.Terminator = ''
             print("Done!")
         except:
-            print('Could not initilise the Ardunio multiplexer!')
-            self.mux=None
+
+            raise IOError('Could not initilise the Ardunio multiplexer! (may blame Aug...)')
     
     def switch_pix(self, index):
         self.mux.write(f"<pxl_{index}_4>".encode('UTF-8')) # command needs to be byte encoded 
