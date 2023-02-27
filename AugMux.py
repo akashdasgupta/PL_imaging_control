@@ -8,7 +8,7 @@ class AugMux():
     def __init__(self):
         try:
             print("Attempting to connect to the Ardunio multiplexer...")
-            self.mux = serial.Serial("COM4") # Ardunios usually live in com4
+            self.mux = serial.Serial("COM7") # Ardunios usually live in com4
             self.mux.Terminator = ''
             print("Done!")
         except:
@@ -16,13 +16,13 @@ class AugMux():
             self.mux=None
     
     def switch_pix(self, index):
-        self.mux.write(f"<pxl_{index}_m>".encode('UTF-8')) # command needs to be byte encoded 
+        self.mux.write(f"<pxl_{index}_4>".encode('UTF-8')) # command needs to be byte encoded 
     
     def close(self):
         self.mux.close()
 
 if __name__ == "__main__":
-    mux = ArdunioMux()
+    mux = AugMux()
     while True:
         choice = input("Channel (or q to quit): ")
         try:
