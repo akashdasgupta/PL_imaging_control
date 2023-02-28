@@ -1,18 +1,10 @@
 import pyvisa as visa
-try:
-    rm.list_resources()
-except NameError:
-    rm = visa.ResourceManager(r'C:\Windows\System32\visa64.dll')
-    resources = rm.list_resources()
-for resource in resources:
-    if resource.startswith("USB"):
-        power_supply_string = resource
 
 class MulticompPro():
-    def __init__(self):
+    def __init__(self, power_supply_string):
         try:
             print("Attempting to connect to Multicomp power supply...")
-            self.ps = rm.open_resource(power_supply_string)
+            self.ps = visa.ResourceManager().open_resource(power_supply_string)
             self.ps.read_termination = '\n'
             self.ps.write_termination = '\n'
             # Safety: 
@@ -20,7 +12,7 @@ class MulticompPro():
             self.ps.write("CURR:LIM 2.01")
             print("Done!")
         except:
-            print('Could not initilise Multicomp power supply (for LED)! ID given:', power_supply_string)
+            raise IOError('Could not initilise Multicomp power supply (for LED)!')
 
     def on(self):
         self.ps.write("OUTPUT ON")
