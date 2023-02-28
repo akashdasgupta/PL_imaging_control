@@ -5,7 +5,7 @@
 
 *Scientific contributors : Suhas Mahesh,Pietro Caprioglio, Yen-Hung Lin, Karl-Augustin Zaininger, Robert D.J. Oliver, Philippe Holzhey, Suer Zhou, Melissa M. McCarthy, Joel A. Smith, Maximilian Frenzel, M. Greyson Christoforo, James M. Ball, Bernard Wenger and Henry J. Snaith*
 
-* If you use this code, please cite our paper in your publication: [DOI WHEN AVALIABLE]
+* If you use this code, please cite our paper in your publication: https://doi.org/10.1021/acsenergylett.2c01094
 * For data analysis using our scripts: https://gitlab.com/pod-group/PL_imaging_analysis
 * REQUIRES: ANDOR SDK and pylablib for camera, keithley2600 for smu, pyvisa for power supply of LED
 
@@ -19,12 +19,11 @@
 ### Usage
 
 * Each piece of equipment has a wrapper class, in a .py file named after the model
-* The 'loops' .py file holds many permutations of measurement subroutines that  may be desired
+* The 'Routines.py' file holds many permutations of measurement subroutines that  may be desired
 
-* In a main file, import all the .py files and initialise each equipment class. Set params, and use loops you need.
-* Example main files are given: Generic main, main for measuring films, and main for imaging cell at open and short circuit
+* In a main file, import all the .py files and initialise each equipment class. Set params, and use routines you need.
+* Example main files are given: main for measuring films, and main for imaging cell at open and short circuit
 * The images get saved in the target directory under 'camera', settings dumped in there too
-* However SM data is returned, YOU MUST SAVE IT YOURSELF
 * Suggested directory structure:
  ```
 Root_data_folder    
