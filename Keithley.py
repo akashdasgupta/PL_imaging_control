@@ -5,7 +5,7 @@ class Keithley():
             print("Attempting to connect to the  Keithley sourcemeter...")
             try:
                 # Opens device:
-                self.sm = Keithley2600(keithly_string, raise_keithley_errors=True)
+                self.sm = Keithley2600(keithly_string, raise_keithley_errors=True,visa_library=r'C:\Windows\System32\visa64.dll')
                 # Reset both channels for consistancy:
                 self.sm.smua.reset()
                 self.sm.smub.reset()
@@ -28,13 +28,11 @@ class Keithley():
 
     def set_voltage_level(self, level, channel='b'):  
         if channel.lower() == 'a':
-            self.sm.smua.reset()
             self.sm.smua.sense = self.sm.smua.SENSE_REMOTE
             self.sm.smua.source.output = self.sm.smua.OUTPUT_ON
             self.sm.smua.source.func = self.sm.smua.OUTPUT_DCVOLTS
             self.sm.smua.source.levelv = level 
         elif channel.lower() == 'b':
-            self.sm.smub.reset()
             self.sm.smub.sense = self.sm.smub.SENSE_REMOTE
             self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
             self.sm.smub.source.func = self.sm.smub.OUTPUT_DCVOLTS
@@ -43,13 +41,11 @@ class Keithley():
 
     def set_current_level(self, level, channel='b'):
         if channel.lower() == 'a':
-            self.sm.smua.reset()
             self.sm.smua.sense = self.sm.smua.SENSE_REMOTE
             self.sm.smua.source.output = self.sm.smua.OUTPUT_ON
             self.sm.smua.source.func = self.sm.smua.OUTPUT_DCAMPS
             self.sm.smua.source.leveli = level 
         elif channel.lower() == 'b':
-            self.sm.smub.reset()
             self.sm.smub.sense = self.sm.smub.SENSE_REMOTE
             self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
             self.sm.smub.source.func = self.sm.smub.OUTPUT_DCAMPS
@@ -57,8 +53,6 @@ class Keithley():
     
     def off(self, channel='b'):
         if channel.lower() == 'a':
-            self.sm.smua.reset()
             self.sm.smua.source.output = self.sm.smua.OUTPUT_OFF
         elif channel.lower() == 'b':
-            self.sm.smub.reset()
             self.sm.smub.source.output = self.sm.smub.OUTPUT_OFF

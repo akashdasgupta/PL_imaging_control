@@ -1,4 +1,4 @@
-from pylablib.legacy.aux_libs.devices import Andor
+from pylablib.devices import Andor
 import imageio
 
 class Zyla():
@@ -8,14 +8,15 @@ class Zyla():
             # Opens Camera:
             self.cam = Andor.AndorSDK3Camera() 
             # We probably don't want any weird noise filtering:
-            self.cam.set_value("SpuriousNoiseFilter", False)
+            self.cam.set_attribute_value("SpuriousNoiseFilter", False)
             # Settings:
-            self.cam.set_exposure(exposure_time)
-            self.cam.set_value("ElectronicShutteringMode", shutter_mode)
-            self.cam.set_value("SimplePreAmpGainControl",bit_depth_mode) 
+            self.cam.set_attribute_value("ExposureTime",exposure_time)
+            self.cam.set_attribute_value("ElectronicShutteringMode", shutter_mode)
+            self.cam.set_attribute_value("SimplePreAmpGainControl",bit_depth_mode) 
 
             # Wait till camera is cooled upon inti:
             print("Done!\nCamera is cooling, please wait...")
+            
             self.cam.set_cooler(True)
             while True:
                 if float(self.cam.get_temperature()) <=1: # To 0 deg
@@ -27,12 +28,12 @@ class Zyla():
 
     def SetParams(self, exposure=None, shutter_mode=None, bit_depth_mode=None):
         if exposure:
-            self.cam.set_exposure(exposure) # in s
+            self.cam.set_attribute_value("ExposureTime",exposure) # in s
         if shutter_mode:
-            self.cam.set_value("ElectronicShutteringMode", shutter_mode) 
+            self.cam.set_attribute_value("ElectronicShutteringMode", shutter_mode) 
             # 0 = rolling, 1 = global
         if bit_depth_mode:
-            self.cam.set_value("SimplePreAmpGainControl",bit_depth_mode) 
+            self.cam.set_attribute_value("SimplePreAmpGainControl",bit_depth_mode) 
             # 0 = 12-bit (high well capacity), 1 = 12-bit (low noise), 16-bit (low noise & high well capacity)
     
     def snap(self, filename):
@@ -47,5 +48,5 @@ class Zyla():
     def close(self):
         self.cam.close()
 
-
+# https://pylablib.readthedocs.io/en/latest/.apidoc/pylablib.devices.Andor.html#pylablib.devices.Andor.AndorSDK3.AndorSDK3Camera.get_all_attribute_values
 

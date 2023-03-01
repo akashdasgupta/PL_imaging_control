@@ -13,12 +13,12 @@ def measure_point_ss(cam,savepath, num_repeats,sm,sm_channel, sm_bias_type, sm_v
     # Sets ps state: 
     if sm_bias_type.lower() == 'voltage':
         sm.set_voltage_level(sm_val, sm_channel)
-    elif sv_val.lower() == 'current':
+    elif  sm_bias_type.lower() == 'current':
         sm.set_current_level(sm_val, sm_channel)
     else: 
         raise ValueError(f"SM str state must be 'voltage' or 'current', not {sm_val}")
     
-    # Turns on illumination
+    # Turns on illuminationgit diff
     if not led_val == 0:
         ps.set_voltage(led_val)
         ps.on()
@@ -33,13 +33,13 @@ def measure_point_ss(cam,savepath, num_repeats,sm,sm_channel, sm_bias_type, sm_v
         bias_str = 'SC'
     elif sm_bias_type.lower() == 'voltage':
         bias_str = f"V={sm_val}"
-    save_str = f"{bias_str}_LED={"{:.3f}".format(nominal_v)}"  
+    save_str = f"{bias_str}_LED={'{:.3f}'.format(led_val)}"  
     
     Vs =[]
     Is = []
     
     # Measure repeats
-    for i in range(num_images):
+    for i in range(num_repeats):
         cam.snap(f"{savepath}/camera/{save_str}_{i}") # Dump to disk
         V, I = sm.measure(sm_channel)
         Vs.append(V)
@@ -53,13 +53,13 @@ def measure_point_ss(cam,savepath, num_repeats,sm,sm_channel, sm_bias_type, sm_v
     # Returns averafe V/I measured
     return np.mean(Vs), np.mean(Is)
     
-def measure_temporal_biasvaried(num_points, cam,savepath,sm,sm_channel, sm_bias_types, sm_vals, ps, led_val, wait_between=0):
+def measure_temporal_biasvaried(cam,savepath,sm,sm_channel, sm_bias_types, sm_vals, ps, led_val, wait_between=0):
     init_time = time.time()
     
     # sets initial bias:
     if sm_bias_types[0].lower() == 'voltage':
         sm.set_voltage_level(sm_vals[0], sm_channel)
-    elif sv_val.lowers[0() == 'current':
+    elif sm_bias_types[0].lower() == 'current':
         sm.set_current_level(sm_vals[0], sm_channel)
     else: 
         raise ValueError(f"SM str state must be 'voltage' or 'current', not {sm_vals[0]}")
@@ -78,7 +78,7 @@ def measure_temporal_biasvaried(num_points, cam,savepath,sm,sm_channel, sm_bias_
         #set bias
         if sm_bias_type.lower() == 'voltage':
             sm.set_voltage_level(sm_val, sm_channel)
-        elif sv_val.lower() == 'current':
+        elif sm_bias_type.lower() == 'current':
             sm.set_current_level(sm_val, sm_channel)
         else: 
             raise ValueError(f"SM str state must be 'voltage' or 'current', not {sm_val}")
@@ -92,7 +92,7 @@ def measure_temporal_biasvaried(num_points, cam,savepath,sm,sm_channel, sm_bias_
         elif sm_bias_type.lower() == 'current':
             bias_str = f"I={sm_val}"
             
-        save_str = f"{bias_str}_LED={"{:.3f}".format(nominal_v)}"
+        save_str = f"{bias_str}_LED={'{:.3f}'.format(led_val)}"
         
         time.sleep(wait_between/2)
         
@@ -106,17 +106,15 @@ def measure_temporal_biasvaried(num_points, cam,savepath,sm,sm_channel, sm_bias_
     # Return to steady state(oc, dark)
     ps.off()
     sm.set_voltage_level(0, sm_channel)
-    time.sleep(ss_time)
+    time.sleep(wait_between)
     
     # Returns V/I measured
     return np.array(Vs), np.array(Is)
-        
-        
-          
     
 def measure_open_circuit(cam,savepath, num_repeats, exposure,sm,sm_channel, ps, led_val, ss_time):
     if not os.path.isdir(f"{savepath}/oc/camera"):
         os.makedirs(f"{savepath}/oc/camera")     
+    cam.SetParams(exposure=exposure)
     
     # Bg and measure
     take_bg(f"{savepath}/oc/camera")
@@ -128,12 +126,13 @@ def measure_open_circuit(cam,savepath, num_repeats, exposure,sm,sm_channel, ps, 
     # save sm readings   
     with open(f"{savepath}/oc/source_meter.csv", 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(sm_data)
+        writer.writerows([(i,j) for i,j in zip(V,I)])
 
 
-def measure_short_circuit():
+def measure_short_circuit(cam,savepath, num_repeats, exposure,sm,sm_channel, ps, led_val, ss_time):
     if not os.path.isdir(f"{savepath}/oc/camera"):
         os.makedirs(f"{savepath}/oc/camera")     
+    cam.SetParams(exposure=exposure)
     
     # Bg and measure
     take_bg(f"{savepath}/oc/camera")
@@ -145,7 +144,7 @@ def measure_short_circuit():
     # save sm readings   
     with open(f"{savepath}/oc/source_meter.csv", 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(sm_data)
+        writer.writerows([(i,j) for i,j in zip(V,I)])
 
     
 def measure_intensity_dependant(cam,savepath, num_repeats, exposure_list,sm,sm_channel, ps, led_V_list, ss_time):
@@ -172,12 +171,12 @@ def measure_intensity_dependant(cam,savepath, num_repeats, exposure_list,sm,sm_c
     # save cam exposure times
     with open(f"{savepath}/oc_int_dep/camera/exposure_list.csv", 'w', newline='') as file:
         writer = csv.writer(file)
-        for row in zip(np.arange(led_vmin,led_vmax+led_vstep, led_vstep), exposure_list):
+        for row in zip(led_V_list, exposure_list):
             writer.writerow(row)
     # save sm readings   
     with open(f"{savepath}/oc_int_dep/source_meter.csv", 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(sm_data)
+        writer.writerows([(i,j) for i,j in zip(V,I)])
     # save LED powers used
     with open(f"{savepath}/oc_int_dep/LED_power_supply.csv", 'w', newline='') as file:
         writer = csv.writer(file)
