@@ -43,10 +43,7 @@ class Zyla():
     
     def dump_settings(self, path):
         with open(path + "\\" + "camera_setting_dump.txt",'w') as file:
-            print(self.cam.get_all_values(), file=file) # Saves all parameters to file
+            print(self.cam.get_all_attribute_values(), file=file) # Saves all parameters to file
     
     def close(self):
         self.cam.close()
-
-# https://pylablib.readthedocs.io/en/latest/.apidoc/pylablib.devices.Andor.html#pylablib.devices.Andor.AndorSDK3.AndorSDK3Camera.get_all_attribute_values
-
