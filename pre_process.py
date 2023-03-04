@@ -15,7 +15,7 @@ cropmeasure = 'oc'
 measurement_subfolders = ['oc', 'sc', 'oc_int_dep']
 alpha = 0.25/0.3087 # Scale factor for area
 photodiode_diam = 1.03 # cm, of powermeter, only change upon recalibration 
-recrop = True
+recrop = False
 
 def find_tif(datapath):
     """ Returns all the tifs in a folder"""
@@ -211,7 +211,7 @@ for key in path_db.keys():
                     tiff_repeat_db[f"{sm_output}_{led_v}"] = [tif_name]
             
             # Final assembly of lists to loop over: 
-            for tiff_index, tiff_key in enumerate(tiff_repeat_db.keys()):
+            for tiff_key in tiff_repeat_db.keys():
                 # Data repeats and refs: 
                 tiff_lists.append([f"{datapath}/{key}/{pix}/{measurement_type}/camera/{k}" for k in tiff_repeat_db[tiff_key]])
                 ref_list.append([f"{datapath}/{key}/{pix}/{measurement_type}/camera/refs/{k}" for k in refs])
@@ -227,7 +227,8 @@ for key in path_db.keys():
                 if len(exp_exposures) == 1:
                     exposure = exp_exposures[0]
                 else:
-                    exposure = exp_exposures[tiff_index]
+                    exp_index = np.argmin([float(led_V)-i for i in exp_ledpower])
+                    exposure = exp_exposures[exp_index]
 
                 # Savepath wih placeholder for flux calc: 
                 full_savepaths.append(f"{savepath}/{key}/{pix}/{measurement_type}/{sm_condition}_FLUX_{exposure}_.npy")  
