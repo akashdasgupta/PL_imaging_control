@@ -3,31 +3,31 @@ import serial.tools.list_ports as sp
 import csv
 
 #### Configure your specific setup here: 
-resource_strings = {'Keithley Instruments Inc., Model 2636, 1211652, 1.4.2': '', # Keithley ID
-                    'FARNELL,MP710086,2017217,FV:V1.5.2': '', # Power supply ID
-                    '5&1A1E88E2&0&7':''} # Ardunio serial number
+resource_strings = {'Keithley Instruments Inc., Model 2636, 1211652, 1.4.2': '\n', # Keithley ID
+                    'FARNELL,MP710086,2017217,FV:V1.5.2': '\n', # Power supply ID
+                    '5&32CF30CB&0&7':' '} # Ardunio serial number
 
 
 # Checks for scientific equipment
 rm = visa.ResourceManager()
-terminators = ['\n', ' '] # Does not assume terminator
+resources = rm.list_resources()
 
-for rec_str in rm.list_resources():
-    # Ignore COM ports that can't be opened: 
-    if not rec_str.startswith('ASRL'):
-        for term in terminators:
-            try:
-                temp = rm.open_resource(rec_str)
-                temp.read_termination = term
-                temp.write_termination = term
-                
-                device_ID = temp.query('*IDN?')
-                if device_ID in resource_strings.keys():
-                    resource_strings[device_ID] = rec_str
+for inst_id in resource_strings.keys():
+    for rec_str in resources:
+        if rec_str.startswith('ASRL'):
+            continue
 
-                break
-            except:
-                pass
+        device = rm.open_resource(rec_str)
+        device.read_termination  = resource_strings[inst_id]
+        device.write_termination  = resource_strings[inst_id]
+
+        if device.query('*IDN?') == inst_id:
+            resource_strings[inst_id] = rec_str
+            device.close()
+            break
+        
+        device.close()
+   
 
 # Checks for ardunio
 ports = sp.comports()
