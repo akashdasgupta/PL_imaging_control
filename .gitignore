@@ -3,4 +3,4 @@ __py*
 *.png
 Thumbs.db
 main_*.py
-Resource_string.csv
+Resource_strings.csv
