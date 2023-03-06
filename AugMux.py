@@ -1,4 +1,5 @@
 import serial
+import csv
 
 class AugMux():
     def __init__(self, COM_port_string):
@@ -17,7 +18,16 @@ class AugMux():
         self.mux.close()
 
 if __name__ == "__main__":
-    mux = AugMux()
+    # Open COM port 
+    with open('Resource_strings.csv','r') as file:
+        reader = csv.reader(file)
+        for row in reader: 
+            if row[0] == 'Ardunio_mux':
+                COM_port = row[1]
+    # Open mux:
+    mux = AugMux(COM_port)
+
+    # Mux selection: 
     while True:
         choice = input("Channel (or q to quit): ")
         try:
