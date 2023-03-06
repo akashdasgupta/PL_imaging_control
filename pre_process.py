@@ -8,14 +8,15 @@ from shutil import copyfile
 from PIL import Image
 from joblib import Parallel, delayed
 
+
 # EDIT these : 
-datapath = r"C:\SCRATCH_PL_image\seo\oc_sc\16h"
-savepath =  r"C:\SCRATCH_PL_image\seo_preprocessed\16h"
+datapath = r" "
+savepath =  r" "
 cropmeasure = 'oc'
 measurement_subfolders = ['oc', 'sc', 'oc_int_dep']
 alpha = 0.25/0.3087 # Scale factor for area
 photodiode_diam = 1.03 # cm, of powermeter, only change upon recalibration 
-recrop = False
+recrop = True
 
 def find_tif(datapath):
     """ Returns all the tifs in a folder"""
@@ -39,6 +40,13 @@ def averager(filenames):
         buffer += im
     average_arr = buffer / len(filenames)
     return average_arr
+
+# Creates lists to loop over
+tiff_lists = []
+ref_list = []
+full_savepaths = []
+led_Vs = []
+crops = []
 
 # Process savepath
 savepath = savepath.replace('\\', '/') # ImageJ can't handel \\ s
@@ -155,7 +163,7 @@ white_center = (int((white_crop_dims[0]+white_crop_dims[2])/2), int((white_crop_
 white_files = find_tif(f"{datapath}/white/camera")
 white_ref_files = find_tif(f"{datapath}/white/camera/refs")
 # Blurred to remove texture:
-white_arr = nd.gaussian_filter(averager([f"{datapath}/white/camera/{i}" for i in  white_files]) - averager([f"{datapath}/white/camera/refs/{i}" for i in white_ref_files]), 10)
+white_arr = nd.gaussian_filter(averager([f"{datapath}/white/camera/{i}" for i in  white_files]) - averager([f"{datapath}/white/camera/refs/{i}" for i in white_ref_files]), 20)
 # Normalise (So that 1 = average power readout of calibrated powermeter)
 pix_in_powermeter = []
 for i in range(white_arr.shape[0]):
@@ -163,13 +171,6 @@ for i in range(white_arr.shape[0]):
         if( (i-white_center[0])**2 + (j-white_center[1])**2) <= (photodiode_diam_pix/2)**2:
             pix_in_powermeter.append(white_arr[i,j])
 white_norm = white_arr / np.mean(pix_in_powermeter)
-
-###### Creates lists to loop over
-tiff_lists = []
-ref_list = []
-full_savepaths = []
-led_Vs = []
-crops = []
 
 for key in path_db.keys():
     for pix_index, pix in enumerate(path_db[key]):
@@ -227,7 +228,7 @@ for key in path_db.keys():
                 if len(exp_exposures) == 1:
                     exposure = exp_exposures[0]
                 else:
-                    exp_index = np.argmin([float(led_V)-i for i in exp_ledpower])
+                    exp_index = np.argmin([abs(float(led_V)-i) for i in exp_ledpower])
                     exposure = exp_exposures[exp_index]
 
                 # Savepath wih placeholder for flux calc: 
@@ -247,43 +248,52 @@ for key in path_db.keys():
                     writer = csv.writer(file)
                     writer.writerow(['Exposure', white_exposure])
                     writer.writerow(['Flux scale', white_flux_scale])
+                    
+                # Copies data over :
+                if os.path.isfile(f"{datapath}/{key}/{pix}/{measurement_type}/source_meter.csv"):
+                    copyfile(f"{datapath}/{key}/{pix}/{measurement_type}/source_meter.csv", f"{savepath}/{key}/{pix}/{measurement_type}/source_meter.csv")
 
+                if os.path.isfile(f"{datapath}/{key}/{pix}/{measurement_type}/LED_power_supply.csv"):
+                    copyfile(f"{datapath}/{key}/{pix}/{measurement_type}/LED_power_supply.csv", f"{savepath}/{key}/{pix}/{measurement_type}/LED_power_supply.csv")
+
+                if os.path.isfile(f"{datapath}/{key}/{pix}/{measurement_type}/camera/camera_setting_dump.txt"):
+                    copyfile(f"{datapath}/{key}/{pix}/{measurement_type}/camera/camera_setting_dump.txt", f"{savepath}/{key}/{pix}/{measurement_type}/camera_setting_dump.txt")
+
+                if os.path.isfile(f"{datapath}/{key}/{pix}/{measurement_type}/camera/exposure_list.csv"):
+                    copyfile(f"{datapath}/{key}/{pix}/{measurement_type}/camera/exposure_list.csv", f"{savepath}/{key}/{pix}/{measurement_type}/exposure_list.csv")
+
+    
 
 def process_one_image(tiff_repeat, refs, full_savepath, led_V, crop): # 
-    # Crop data
-    imarr_cropped = averager(tiff_repeat)[crop[0]:crop[2],crop[1]:crop[3]] - averager(refs)[crop[0]:crop[2],crop[1]:crop[3]]
+# Crop data
+imarr_cropped = averager(tiff_repeat)[crop[0]:crop[2],crop[1]:crop[3]] - averager(refs)[crop[0]:crop[2],crop[1]:crop[3]]
 
-    # Crop white reference
-    cropped_white_norm = white_norm[crop[0]:crop[2],crop[1]:crop[3]]
-    
-    # Calculate how much light fell on the area of the sample:
-    overall_photon_flux = ledf(led_V)
-    photon_flux_on_cell = np.mean(cropped_white_norm)*overall_photon_flux
-    
-    # Fill in flux value in savepath: 
-    final_savepath = str(photon_flux_on_cell).join(full_savepath.split('FLUX'))
+# Crop white reference
+cropped_white_norm = white_norm[crop[0]:crop[2],crop[1]:crop[3]]
 
-    # Whitefield correction : 
-    final_imarr = (imarr_cropped/cropped_white_norm)*np.mean(cropped_white_norm)
-    
-    # save
-    np.save(final_savepath,final_imarr)
+# Calculate how much light fell on the area of the sample:
+overall_photon_flux = ledf(led_V)
+photon_flux_on_cell = np.mean(cropped_white_norm)*overall_photon_flux
+
+# Fill in flux value in savepath: 
+final_savepath = str(photon_flux_on_cell).join(full_savepath.split('FLUX'))
+
+# Whitefield correction : 
+final_imarr = (imarr_cropped/cropped_white_norm)*np.mean(cropped_white_norm)
+
+# save
+np.save(final_savepath,final_imarr)
 
 # Parallel processs, IO limited so using threading 
 Parallel(n_jobs=14, backend='threading')(delayed(process_one_image)(tiff_repeat,
-                                                                    refs, full_savepath, 
-                                                                   led_V, 
-                                                                    crop) for tiff_repeat, refs, full_savepath, led_V, crop in zip(tiff_lists, 
-                                                                                                                                    ref_list,
-                                                                                                                                    full_savepaths,
-                                                                                                                                    led_Vs,
-                                                                                                                                    crops))
+                                                                refs, full_savepath, 
+                                                                led_V, 
+                                                                crop) for tiff_repeat, refs, full_savepath, led_V, crop in zip(tiff_lists, 
+                                                                                                                                ref_list,
+                                                                                                                                full_savepaths,
+                                                                                                                                led_Vs,
+                                                                                                                                crops))
 
 # Manule exit if imageJ interactive open
 if recrop:
-    print('Done! Press ctrl+c to exit')
-
-               
-    
-
-    
+print('Done! Press ctrl+c to exit')        
