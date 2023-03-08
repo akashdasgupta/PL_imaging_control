@@ -29,27 +29,27 @@ class Keithley():
     def set_voltage_level(self, level, channel='b'):  
         if channel.lower() == 'a':
             self.sm.smua.sense = self.sm.smua.SENSE_REMOTE
-            self.sm.smua.source.output = self.sm.smua.OUTPUT_ON
             self.sm.smua.source.func = self.sm.smua.OUTPUT_DCVOLTS
             self.sm.smua.source.levelv = level 
+            self.sm.smua.source.output = self.sm.smua.OUTPUT_ON
         elif channel.lower() == 'b':
             self.sm.smub.sense = self.sm.smub.SENSE_REMOTE
-            self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
             self.sm.smub.source.func = self.sm.smub.OUTPUT_DCVOLTS
             self.sm.smub.source.levelv = level 
+            self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
 
 
     def set_current_level(self, level, channel='b'):
         if channel.lower() == 'a':
             self.sm.smua.sense = self.sm.smua.SENSE_REMOTE
-            self.sm.smua.source.output = self.sm.smua.OUTPUT_ON
             self.sm.smua.source.func = self.sm.smua.OUTPUT_DCAMPS
             self.sm.smua.source.leveli = level 
+            self.sm.smua.source.output = self.sm.smua.OUTPUT_ON
         elif channel.lower() == 'b':
             self.sm.smub.sense = self.sm.smub.SENSE_REMOTE
-            self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
             self.sm.smub.source.func = self.sm.smub.OUTPUT_DCAMPS
             self.sm.smub.source.leveli = level 
+            self.sm.smub.source.output = self.sm.smub.OUTPUT_ON
     
     def off(self, channel='b'):
         if channel.lower() == 'a':
