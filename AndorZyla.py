@@ -2,7 +2,7 @@ from pylablib.devices import Andor
 import imageio
 
 class Zyla():
-    def __init__(self, exposure_time, bit_depth_mode, shutter_mode):
+    def __init__(self, bit_depth_mode, shutter_mode):
         print("Attempting to connect to ANDOR Zyla...")
         try:
             # Opens Camera:
@@ -10,7 +10,6 @@ class Zyla():
             # We probably don't want any weird noise filtering:
             self.cam.set_attribute_value("SpuriousNoiseFilter", False)
             # Settings:
-            self.cam.set_attribute_value("ExposureTime",exposure_time)
             self.cam.set_attribute_value("ElectronicShutteringMode", shutter_mode)
             self.cam.set_attribute_value("SimplePreAmpGainControl",bit_depth_mode) 
 
@@ -39,10 +38,10 @@ class Zyla():
     def snap(self, filename):
         image = self.cam.snap() # Saves image to memory
         # Write to disk:
-        imageio.imwrite(filename+".tif", image) # tif is the only thing that works!
+        imageio.imwrite(f"{filename}.tif", image) # tif is the only thing that works!
     
     def dump_settings(self, path):
-        with open(path + "\\" + "camera_setting_dump.txt",'w') as file:
+        with open(f"{path}/camera_setting_dump.txt",'w') as file:
             print(self.cam.get_all_attribute_values(), file=file) # Saves all parameters to file
     
     def close(self):
