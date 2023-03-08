@@ -265,24 +265,24 @@ for key in path_db.keys():
     
 
 def process_one_image(tiff_repeat, refs, full_savepath, led_V, crop): # 
-# Crop data
-imarr_cropped = averager(tiff_repeat)[crop[0]:crop[2],crop[1]:crop[3]] - averager(refs)[crop[0]:crop[2],crop[1]:crop[3]]
+    # Crop data
+    imarr_cropped = averager(tiff_repeat)[crop[0]:crop[2],crop[1]:crop[3]] - averager(refs)[crop[0]:crop[2],crop[1]:crop[3]]
 
-# Crop white reference
-cropped_white_norm = white_norm[crop[0]:crop[2],crop[1]:crop[3]]
+    # Crop white reference
+    cropped_white_norm = white_norm[crop[0]:crop[2],crop[1]:crop[3]]
 
-# Calculate how much light fell on the area of the sample:
-overall_photon_flux = ledf(led_V)
-photon_flux_on_cell = np.mean(cropped_white_norm)*overall_photon_flux
+    # Calculate how much light fell on the area of the sample:
+    overall_photon_flux = ledf(led_V)
+    photon_flux_on_cell = np.mean(cropped_white_norm)*overall_photon_flux
 
-# Fill in flux value in savepath: 
-final_savepath = str(photon_flux_on_cell).join(full_savepath.split('FLUX'))
+    # Fill in flux value in savepath: 
+    final_savepath = str(photon_flux_on_cell).join(full_savepath.split('FLUX'))
 
-# Whitefield correction : 
-final_imarr = (imarr_cropped/cropped_white_norm)*np.mean(cropped_white_norm)
+    # Whitefield correction : 
+    final_imarr = (imarr_cropped/cropped_white_norm)*np.mean(cropped_white_norm)
 
-# save
-np.save(final_savepath,final_imarr)
+    # save
+    np.save(final_savepath,final_imarr)
 
 # Parallel processs, IO limited so using threading 
 Parallel(n_jobs=14, backend='threading')(delayed(process_one_image)(tiff_repeat,
@@ -296,4 +296,4 @@ Parallel(n_jobs=14, backend='threading')(delayed(process_one_image)(tiff_repeat,
 
 # Manule exit if imageJ interactive open
 if recrop:
-print('Done! Press ctrl+c to exit')        
+    print('Done! Press ctrl+c to exit')        
