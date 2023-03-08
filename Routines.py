@@ -27,9 +27,9 @@ def measure_point_ss(cam,savepath, num_repeats,sm,sm_channel, sm_bias_type, sm_v
     time.sleep(ss_time) 
     
     # save_string
-    if sm_bias_type.lower() == 'voltage' and sm_val == 0: 
+    if sm_bias_type.lower() == 'current' and sm_val == 0: 
         bias_str = 'OC'
-    elif sm_bias_type.lower() == 'current' and sm_val == 0:
+    elif sm_bias_type.lower() == 'voltage' and sm_val == 0:
         bias_str = 'SC'
     elif sm_bias_type.lower() == 'voltage':
         bias_str = f"V={sm_val}"
@@ -83,9 +83,9 @@ def measure_temporal_biasvaried(cam,savepath,sm,sm_channel, sm_bias_types, sm_va
         else: 
             raise ValueError(f"SM str state must be 'voltage' or 'current', not {sm_val}")
             
-        if sm_bias_type.lower() == 'voltage' and sm_val == 0: 
+        if sm_bias_type.lower() == 'curent' and sm_val == 0: 
             bias_str = 'OC'
-        elif sm_bias_type.lower() == 'current' and sm_val == 0:
+        elif sm_bias_type.lower() == 'voltage' and sm_val == 0:
             bias_str = 'SC'
         elif sm_bias_type.lower() == 'voltage':
             bias_str = f"V={sm_val}"
@@ -117,34 +117,34 @@ def measure_open_circuit(cam,savepath, num_repeats, exposure,sm,sm_channel, ps, 
     cam.SetParams(exposure=exposure)
     
     # Bg and measure
-    take_bg(f"{savepath}/oc/camera")
+    take_bg(cam, f"{savepath}/oc/camera")
     V, I = measure_point_ss(cam,f"{savepath}/oc", num_repeats,sm,sm_channel, 'current', 0, ps, led_val, ss_time)
-    take_bg(f"{savepath}/oc/camera")
+    take_bg(cam, f"{savepath}/oc/camera")
     
     # save cam settings
     cam.dump_settings(f'{savepath}/oc/camera')
     # save sm readings   
     with open(f"{savepath}/oc/source_meter.csv", 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerows([(i,j) for i,j in zip(V,I)])
+        writer.writerows([(V,I)])
 
 
 def measure_short_circuit(cam,savepath, num_repeats, exposure,sm,sm_channel, ps, led_val, ss_time):
-    if not os.path.isdir(f"{savepath}/oc/camera"):
-        os.makedirs(f"{savepath}/oc/camera")     
+    if not os.path.isdir(f"{savepath}/sc/camera"):
+        os.makedirs(f"{savepath}/sc/camera")     
     cam.SetParams(exposure=exposure)
     
     # Bg and measure
-    take_bg(f"{savepath}/oc/camera")
-    V, I = measure_point_ss(cam,f"{savepath}/oc", num_repeats,sm,sm_channel, 'voltage', 0, ps, led_val, ss_time)
-    take_bg(f"{savepath}/oc/camera")
+    take_bg(cam, f"{savepath}/sc/camera")
+    V, I = measure_point_ss(cam,f"{savepath}/sc", num_repeats,sm,sm_channel, 'voltage', 0, ps, led_val, ss_time)
+    take_bg(cam,f"{savepath}/sc/camera")
     
     # save cam settings
-    cam.dump_settings(f'{savepath}/oc/camera')
+    cam.dump_settings(f'{savepath}/sc/camera')
     # save sm readings   
-    with open(f"{savepath}/oc/source_meter.csv", 'w', newline='') as file:
+    with open(f"{savepath}/sc/source_meter.csv", 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerows([(i,j) for i,j in zip(V,I)])
+        writer.writerows([(V,I)])
 
     
 def measure_intensity_dependant(cam,savepath, num_repeats, exposure_list,sm,sm_channel, ps, led_V_list, ss_time):
@@ -154,7 +154,7 @@ def measure_intensity_dependant(cam,savepath, num_repeats, exposure_list,sm,sm_c
     Is = []
     
     # Bg before
-    take_bg(f"{savepath}/oc_int_dep/camera")
+    take_bg(cam,f"{savepath}/oc_int_dep/camera")
     
     # Measure
     for exposure, led_val in zip(exposure_list, led_V_list):
@@ -164,7 +164,7 @@ def measure_intensity_dependant(cam,savepath, num_repeats, exposure_list,sm,sm_c
         Is.append(I)
     
     # Bg after (end of measure point should return to dark OC)
-    take_bg(f"{savepath}/oc_int_dep/camera")
+    take_bg(cam,f"{savepath}/oc_int_dep/camera")
     
     # save cam settings
     cam.dump_settings(f'{savepath}/oc_int_dep/camera')
@@ -176,7 +176,7 @@ def measure_intensity_dependant(cam,savepath, num_repeats, exposure_list,sm,sm_c
     # save sm readings   
     with open(f"{savepath}/oc_int_dep/source_meter.csv", 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerows([(i,j) for i,j in zip(V,I)])
+        writer.writerows([(i,j) for i,j in zip(Vs,Is)])
     # save LED powers used
     with open(f"{savepath}/oc_int_dep/LED_power_supply.csv", 'w', newline='') as file:
         writer = csv.writer(file)
